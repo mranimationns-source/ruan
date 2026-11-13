@@ -1,0 +1,2935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>RUAN JEWELS — Team Workspace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase SDKs (Modular) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, getDocs, updateDoc, deleteDoc, onSnapshot, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyB2reksf4qMLTxPr5QGiSHprkCqbu0cad8",
+      authDomain: "ruanjewels.firebaseapp.com",
+      projectId: "ruanjewels",
+      storageBucket: "ruanjewels.firebasestorage.app",
+      messagingSenderId: "585794656383",
+      appId: "1:585794656383:web:849168f4040a076e7bc74a"
+    };
+
+    // Initialize Firebase & Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Expose firebase tools globally for app logic
+    window.db = db;
+    window.dbCol = collection;
+    window.dbDoc = doc;
+    window.dbSetDoc = setDoc;
+    window.dbGetDocs = getDocs;
+    window.dbUpdateDoc = updateDoc;
+    window.dbDeleteDoc = deleteDoc;
+    window.dbOnSnapshot = onSnapshot;
+    window.dbQuery = query;
+    window.dbServerTimestamp = serverTimestamp;
+   
+    window.dispatchEvent(new Event('firebase-ready'));
+  </script>
+  <style>
+    /* ==========================================================================
+       RUAN JEWELS — INSTAGRAM-STYLE CAROUSEL & STUDIO DESIGN SYSTEM
+       - Pure White Canvas (#FFFFFF) & Soft Secondary Surface (#FAFAFA)
+       - Meta-Inspired Cool Blue-Slate Studio Accents (#0095F6 / #EFF6FF / #DBEAFE)
+       - Deep Maroon Brand Identity (#580A18)
+       - Strict Zero Horizontal Overflow for APK WebView
+       ========================================================================== */
+    :root {
+      --bg-canvas: #FFFFFF;
+      --bg-subtle: #FAFAFA;
+      --border-hairline: #DBDBDB;
+      --border-light: #EFEFEF;
+      --text-primary: #262626;
+      --text-muted: #8E8E8E;
+      --brand-maroon: #580A18;
+      --brand-maroon-hover: #3F0610;
+      --meta-blue: #0095F6;
+      --meta-blue-dark: #1877F2;
+      --chart-red: #E11D48;
+      --chart-green: #16A34A;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #FAFAFA;
+      color: var(--text-primary);
+      height: 100%;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden !important;
+      overflow-y: hidden;
+    }
+
+    /* Mobile APK Shell Container */
+    #app-shell {
+      width: 100%;
+      max-width: 480px;
+      height: 100dvh;
+      margin: 0 auto;
+      background-color: var(--bg-canvas);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden !important;
+      overflow-y: hidden;
+      border-left: 1px solid var(--border-light);
+      border-right: 1px solid var(--border-light);
+    }
+
+    .ig-card {
+      background-color: #FFFFFF;
+      color: #262626;
+      border: 1px solid #DBDBDB;
+      border-radius: 14px;
+    }
+
+    .meta-create-card {
+      background: linear-gradient(135deg, #F0F7FF 0%, #E6F0FF 55%, #F8FAFC 100%);
+      border: 1px solid #BFDBFE;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(24, 119, 242, 0.06);
+      transition: transform 0.12s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .ig-input {
+      background-color: #FAFAFA;
+      color: #262626;
+      border: 1px solid #DBDBDB;
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .ig-input:focus {
+      background-color: #FFFFFF;
+      border-color: #8E8E8E;
+    }
+
+    .ig-avatar {
+      border-radius: 9999px;
+      background-color: #FAFAFA;
+      border: 1px solid #DBDBDB;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #580A18;
+      font-weight: 600;
+    }
+
+    .ig-btn-primary {
+      background-color: #580A18;
+      color: #FFFFFF;
+      font-weight: 600;
+      border-radius: 10px;
+      transition: background-color 0.15s ease;
+    }
+
+    .ig-btn-primary:hover {
+      background-color: #3F0610;
+    }
+
+    .ig-btn-secondary {
+      background-color: #EFEFEF;
+      color: #262626;
+      font-weight: 600;
+      border-radius: 10px;
+      transition: background-color 0.15s ease;
+    }
+
+    /* Instagram-Style Horizontal Side-Scrolling Carousel */
+    .ig-carousel {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      scroll-behavior: smooth;
+    }
+    .ig-carousel::-webkit-scrollbar {
+      display: none;
+    }
+    .ig-carousel-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    /* Vertical-only Scrollbar for Main App Shell */
+    .scroll-area {
+      overflow-y: auto;
+      overflow-x: hidden !important;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .scroll-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    .y-axis-ticks {
+      border-right: 1px solid #DBDBDB;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        #DBDBDB 0px,
+        #DBDBDB 1px,
+        transparent 1px,
+        transparent 14px
+      );
+      background-size: 6px 14px;
+      background-position: right top;
+      background-repeat: repeat-y;
+    }
+
+    .btn-press:active {
+      transform: scale(0.97);
+    }
+
+    .hidden-view {
+      display: none !important;
+    }
+
+    .blue-tick {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app-shell">
+
+    <!-- Toast Banner -->
+    <div id="toast-banner" class="hidden-view fixed top-4 left-1/2 -translate-x-1/2 z-[120] w-[90%] max-w-[430px] bg-[#262626] text-white rounded-xl px-4 py-3 shadow-lg flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <span id="toast-dot" class="w-2 h-2 rounded-full bg-[#16A34A] shrink-0"></span>
+        <p id="toast-text" class="text-xs font-medium leading-snug"></p>
+      </div>
+      <button onclick="hideToast()" class="text-xs font-semibold text-white/80 hover:text-white px-1.5">Dismiss</button>
+    </div>
+
+    <!-- 1. AUTHENTICATION SCREEN -->
+    <section id="auth-screen" class="w-full h-full flex flex-col justify-between p-6 overflow-y-auto overflow-x-hidden bg-white">
+      <div class="pt-2"></div>
+      <div class="my-auto w-full max-w-[360px] mx-auto space-y-6">
+        <div class="flex flex-col items-center text-center">
+          <div id="login-logo-holder" class="w-36 h-36 flex items-center justify-center mb-3 bg-transparent">
+            <svg viewBox="0 0 120 120" class="w-32 h-32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="60,8 106,42 88,108 32,108 14,42" stroke="#580A18" stroke-width="4.5" fill="none"/>
+              <polygon points="60,22 92,46 79,95 41,95 28,46" stroke="#262626" stroke-width="1.8" fill="none"/>
+              <text x="60" y="67" text-anchor="middle" fill="#580A18" font-size="24" font-weight="700" letter-spacing="2">RJ</text>
+            </svg>
+          </div>
+          <h1 id="login-brand-title" class="text-[#262626] text-xl font-bold tracking-[0.22em] uppercase">RUAN JEWELS</h1>
+          <p class="text-[#8E8E8E] text-xs mt-1">Private Team Workspace</p>
+        </div>
+
+        <div id="login-card-view" class="space-y-4">
+          <form id="login-form" onsubmit="handleLogin(event)" class="space-y-3">
+            <input
+              id="login-name"
+              type="text"
+              required
+              autocomplete="off"
+              placeholder="Your name (Ruchita, Anushka, or Mihir)"
+              class="ig-input w-full px-4 py-3.5 rounded-full text-sm"
+            />
+            <div class="relative">
+              <input
+                id="login-passcode"
+                type="password"
+                required
+                autocomplete="current-password"
+                placeholder="Private Password"
+                class="ig-input w-full pl-4 pr-14 py-3.5 rounded-full text-sm"
+              />
+              <button type="button" onclick="toggleLoginPasswordVisibility()" id="toggle-pass-btn" class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">
+                Show
+              </button>
+            </div>
+            <button type="submit" class="btn-press ig-btn-primary w-full py-3.5 rounded-full text-sm mt-1">
+              Log In
+            </button>
+          </form>
+          <div class="pt-2 text-center">
+            <button type="button" onclick="showForgotPassword(true)" class="text-xs font-semibold text-[#580A18] hover:underline">
+              Forgot password?
+            </button>
+          </div>
+        </div>
+
+        <div id="forgot-card-view" class="hidden-view space-y-4">
+          <div class="ig-card p-5 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-[#580A18]">Password Recovery</span>
+              <button type="button" onclick="showForgotPassword(false)" class="text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">← Back to Login</button>
+            </div>
+            <div>
+              <h2 class="text-base font-semibold text-[#262626]">Ask management for a new password</h2>
+              <p class="text-xs text-[#8E8E8E] mt-1">Enter your name below to send an automated recovery request to Management.</p>
+            </div>
+            <form onsubmit="handleForgotPassword(event)" class="space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Your Name</label>
+                <input id="forgot-name-input" type="text" required placeholder="Type your name..." class="ig-input w-full px-3.5 py-3 text-sm" />
+              </div>
+              <button type="submit" class="btn-press ig-btn-primary w-full py-3 text-xs">
+                Ask for the new password
+              </button>
+            </form>
+            <div id="recovery-dispatch-box" class="hidden-view pt-3 border-t border-[#EFEFEF] space-y-2.5">
+              <p class="text-xs font-semibold text-[#16A34A]">✓ Request prepared for Admin</p>
+              <p id="recovery-preview-text" class="text-[11px] text-[#262626] bg-[#FAFAFA] p-3 rounded-lg border border-[#EFEFEF] leading-relaxed whitespace-pre-line"></p>
+              <div class="flex gap-2">
+                <a id="recovery-mailto-link" href="#" class="flex-1 text-center py-2.5 rounded-lg bg-[#580A18] text-white text-xs font-semibold">Send Email</a>
+                <button type="button" onclick="copyRecoveryText()" class="flex-1 py-2.5 rounded-lg bg-[#EFEFEF] text-[#262626] text-xs font-semibold">Copy Text</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center pb-2">
+        <p class="text-[11px] text-[#8E8E8E]">from <span class="font-semibold text-[#580A18] tracking-wider">RUAN JEWELS</span></p>
+      </div>
+    </section>
+
+    <!-- MAIN AUTHENTICATED APP WORKSPACE -->
+    <div id="main-workspace" class="hidden-view w-full h-full flex flex-col bg-white overflow-x-hidden">
+      <header class="w-full h-16 px-4 bg-white border-b border-[#EFEFEF] flex items-center justify-between shrink-0 z-30">
+        <button type="button" onclick="toggleDrawer(true)" aria-label="Menu" class="btn-press p-2 -ml-2 text-[#262626] hover:text-[#580A18]">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <button type="button" onclick="switchTab('home')" class="btn-press flex items-center gap-2.5 max-w-[70%]">
+          <div id="header-logo-img" class="w-11 h-11 flex items-center justify-center shrink-0 bg-transparent">
+            <svg viewBox="0 0 120 120" class="w-10 h-10" fill="none">
+              <polygon points="60,8 106,42 88,108 32,108 14,42" stroke="#580A18" stroke-width="7" fill="none"/>
+              <text x="60" y="72" text-anchor="middle" fill="#580A18" font-size="38" font-weight="700">RJ</text>
+            </svg>
+          </div>
+          <span id="header-brand-name" class="text-base font-bold tracking-[0.16em] text-[#262626] uppercase truncate">RUAN JEWELS</span>
+        </button>
+        <button type="button" onclick="openProfileModal(state.currentUserId)" aria-label="My Profile" class="btn-press shrink-0">
+          <div id="header-user-avatar" class="ig-avatar w-9 h-9 text-xs"></div>
+        </button>
+      </header>
+
+      <main id="viewport-container" class="flex-1 w-full scroll-area bg-white pb-20">
+
+        <!-- TAB 1: HOME FEED (INSTAGRAM CAROUSEL FOR MULTIPLE MEDIA) -->
+        <section id="view-home" class="divide-y divide-[#EFEFEF]">
+          <div class="px-4 py-3.5 bg-white">
+            <div class="grid grid-cols-3 gap-2" id="stories-bar-container"></div>
+          </div>
+          <div id="home-posts-feed" class="divide-y divide-[#EFEFEF]"></div>
+        </section>
+
+        <!-- TAB 2: TEAM & PRODUCTS -->
+        <section id="view-team" class="hidden-view p-4 space-y-5">
+          <div>
+            <div class="flex items-center justify-between mb-2.5">
+              <h2 class="text-xs font-semibold uppercase tracking-wider text-[#8E8E8E]">Team Members</h2>
+              <span class="text-[11px] text-[#8E8E8E]">Tap to view brands</span>
+            </div>
+            <div id="team-cards-list" class="space-y-2"></div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-xs font-semibold uppercase tracking-wider text-[#8E8E8E]">Products</h2>
+              <button type="button" onclick="openAddSubView('product')" class="text-xs font-semibold text-[#580A18] hover:underline">+ Add Product</button>
+            </div>
+            <div id="products-grid-container" class="grid grid-cols-2 gap-3"></div>
+          </div>
+        </section>
+
+        <!-- TAB 3: "+" CREATION HUB -->
+        <section id="view-add" class="hidden-view p-4 space-y-4">
+          <div id="add-hub-menu" class="space-y-3.5 pt-1">
+            <div class="flex items-center justify-between px-0.5">
+              <div>
+                <h2 class="text-sm font-bold text-[#1E3A8A] tracking-wide">Create Studio</h2>
+                <p class="text-[11px] text-[#64748B]">Publish posts, catalog products & team notices</p>
+              </div>
+              <span class="px-2.5 py-1 rounded-full bg-[#DBEAFE] text-[#1D4ED8] text-[10px] font-bold tracking-wider uppercase">RUAN STUDIO</span>
+            </div>
+            <button type="button" onclick="openAddSubView('post')" class="btn-press meta-create-card w-full p-5 flex items-center gap-4 text-left">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1877F2] to-[#0095F6] text-white flex items-center justify-center shrink-0 shadow-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <rect x="3" y="3" width="18" height="18" rx="4" />
+                  <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-bold text-[#0F172A]">Add Post</h3>
+                <p class="text-xs text-[#475569] mt-0.5">Share unlimited carousel photos, videos, music & caption</p>
+              </div>
+              <div class="w-8 h-8 rounded-full bg-white/90 border border-[#BFDBFE] text-[#1877F2] flex items-center justify-center text-lg font-bold shrink-0">+</div>
+            </button>
+            <button type="button" onclick="openAddSubView('product')" class="btn-press meta-create-card w-full p-5 flex items-center gap-4 text-left">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1877F2] to-[#0095F6] text-white flex items-center justify-center shrink-0 shadow-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 3h12l4 6-10 12L2 9l4-6z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2 9h20M12 21L8.5 9 12 3l3.5 6L12 21z" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-bold text-[#0F172A]">Add Product</h3>
+                <p class="text-xs text-[#475569] mt-0.5">Add carousel visuals, selling, box, sticker & making cost</p>
+              </div>
+              <div class="w-8 h-8 rounded-full bg-white/90 border border-[#BFDBFE] text-[#1877F2] flex items-center justify-center text-lg font-bold shrink-0">+</div>
+            </button>
+            <button type="button" onclick="openAddSubView('announcement')" class="btn-press meta-create-card w-full p-5 flex items-center gap-4 text-left">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1877F2] to-[#0095F6] text-white flex items-center justify-center shrink-0 shadow-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-bold text-[#0F172A]">Announcement</h3>
+                <p class="text-xs text-[#475569] mt-0.5">Post an official subject, notice & carousel images/videos</p>
+              </div>
+              <div class="w-8 h-8 rounded-full bg-white/90 border border-[#BFDBFE] text-[#1877F2] flex items-center justify-center text-lg font-bold shrink-0">+</div>
+            </button>
+          </div>
+
+          <!-- POST FORM -->
+          <div id="add-form-post" class="hidden-view space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-[#EFEFEF]">
+              <button type="button" onclick="resetAddHub()" class="text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">Cancel</button>
+              <h3 id="post-form-title" class="text-sm font-semibold text-[#262626]">New Post</h3>
+              <span class="w-10"></span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <div id="post-author-avatar" class="ig-avatar w-9 h-9 text-xs"></div>
+              <div>
+                <div class="flex items-center gap-1">
+                  <p id="post-author-name" class="text-xs font-semibold text-[#262626]"></p>
+                  <span class="blue-tick" title="Verified"><svg class="w-3.5 h-3.5 text-[#0095F6]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.39 2.39 3.38-.42.84 3.3L21.5 9l-1.39 3.12L21.5 15.2l-2.89 1.73-.84 3.3-3.38-.42L12 22.2l-2.39-2.39-3.38.42-.84-3.3L2.5 15.2l1.39-3.08L2.5 9l2.89-1.73.84-3.3 3.38.42L12 2zm-1.2 13.4l5.2-5.2-1.4-1.4-3.8 3.8-1.8-1.8-1.4 1.4 3.2 3.2z"/></svg></span>
+                </div>
+                <p id="post-author-tag" class="text-[11px] text-[#8E8E8E]"></p>
+              </div>
+            </div>
+            <form onsubmit="submitNewPost(event)" class="space-y-4">
+              <input type="hidden" id="editing-post-id" value="" />
+              <div>
+                <label class="flex flex-col items-center justify-center w-full h-36 border border-dashed border-[#DBDBDB] rounded-xl cursor-pointer bg-[#FAFAFA] hover:bg-[#EFEFEF]/60 transition p-4 text-center">
+                  <svg class="w-8 h-8 text-[#0095F6] mb-1.5" fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="3" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21" />
+                  </svg>
+                  <span class="text-xs font-semibold text-[#262626]">Add Carousel Images & Videos (Unlimited)</span>
+                  <span class="text-[11px] text-[#8E8E8E] mt-0.5">Select multiple files for side-scrolling carousel</span>
+                  <input id="post-media-input" type="file" accept="image/*,video/*" multiple onchange="handleMultiMediaSelect(this, 'post')" class="hidden" />
+                </label>
+                <div id="post-media-preview" class="mt-3 grid grid-cols-3 gap-2 hidden-view"></div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Background Music (from Settings MP3 Library)</label>
+                <select id="post-music-select" class="ig-input w-full px-3.5 py-2.5 text-xs font-medium bg-white">
+                  <option value="">No Music</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Caption</label>
+                <textarea id="post-desc-input" rows="3" required placeholder="Write a big caption..." class="ig-input w-full p-3 text-base"></textarea>
+              </div>
+              <button type="submit" id="post-submit-btn" class="btn-press ig-btn-primary w-full py-3 text-sm">
+                Publish
+              </button>
+            </form>
+          </div>
+
+          <!-- PRODUCT FORM -->
+          <div id="add-form-product" class="hidden-view space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-[#EFEFEF]">
+              <button type="button" onclick="resetAddHub()" class="text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">Cancel</button>
+              <h3 class="text-sm font-semibold text-[#262626]">Add Product</h3>
+              <span class="w-10"></span>
+            </div>
+            <form onsubmit="submitNewProduct(event)" class="space-y-3.5">
+              <div>
+                <label class="flex flex-col items-center justify-center w-full h-32 border border-dashed border-[#DBDBDB] rounded-xl cursor-pointer bg-[#FAFAFA] hover:bg-[#EFEFEF]/60 transition p-3 text-center">
+                  <span class="text-xs font-semibold text-[#262626]">+ Add Carousel Product Images & Videos</span>
+                  <span class="text-[11px] text-[#8E8E8E] mt-0.5">Select multiple visual files</span>
+                  <input id="prod-media-input" type="file" accept="image/*,video/*" multiple onchange="handleMultiMediaSelect(this, 'product')" class="hidden" />
+                </label>
+                <div id="prod-media-preview" class="mt-2 grid grid-cols-3 gap-2 hidden-view"></div>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Product Name</label>
+                <input id="prod-name-input" type="text" required placeholder="e.g. Royal Kundan Choker" class="ig-input w-full px-3.5 py-2.5 text-sm" />
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Selling price (₹)</label>
+                  <input id="prod-selling-input" type="number" step="0.01" min="0" required placeholder="0" class="ig-input w-full px-3.5 py-2.5 text-sm font-semibold" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Box price (₹)</label>
+                  <input id="prod-box-input" type="number" step="0.01" min="0" required placeholder="0" class="ig-input w-full px-3.5 py-2.5 text-sm font-semibold" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Sticker price (₹)</label>
+                  <input id="prod-sticker-input" type="number" step="0.01" min="0" required placeholder="0" class="ig-input w-full px-3.5 py-2.5 text-sm font-semibold" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Product price (₹)</label>
+                  <input id="prod-making-input" type="number" step="0.01" min="0" required placeholder="Making cost" class="ig-input w-full px-3.5 py-2.5 text-sm font-semibold" />
+                </div>
+              </div>
+              <button type="submit" class="btn-press ig-btn-primary w-full py-3 text-sm mt-2">
+                Add
+              </button>
+            </form>
+          </div>
+
+          <!-- ANNOUNCEMENT FORM (WITH MULTI-MEDIA CAROUSEL SUPPORT) -->
+          <div id="add-form-announcement" class="hidden-view space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-[#EFEFEF]">
+              <button type="button" onclick="resetAddHub()" class="text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">Cancel</button>
+              <h3 class="text-sm font-semibold text-[#262626]">Announce</h3>
+              <span class="w-10"></span>
+            </div>
+            <form onsubmit="submitNewAnnouncement(event)" class="space-y-3.5">
+              <div>
+                <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Subject</label>
+                <input id="ann-subject-input" type="text" required placeholder="Announcement subject..." class="ig-input w-full px-3.5 py-2.5 text-sm font-semibold" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Object / Details</label>
+                <textarea id="ann-body-input" rows="4" required placeholder="Write announcement details..." class="ig-input w-full p-3 text-sm"></textarea>
+              </div>
+              <div>
+                <label class="flex flex-col items-center justify-center w-full py-3 border border-dashed border-[#DBDBDB] rounded-xl cursor-pointer bg-[#FAFAFA] text-xs font-medium text-[#262626]">
+                  <span>+ Add Carousel Images & Videos (Unlimited)</span>
+                  <span class="text-[10px] text-[#8E8E8E] mt-0.5">Side-scrolling carousel for announcements</span>
+                  <input id="ann-media-input" type="file" accept="image/*,video/*" multiple onchange="handleMultiMediaSelect(this, 'announcement')" class="hidden" />
+                </label>
+                <div id="ann-media-preview" class="mt-2 grid grid-cols-3 gap-2 hidden-view"></div>
+              </div>
+              <button type="submit" class="btn-press ig-btn-primary w-full py-3 text-sm">
+                Post Announcement
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- TAB 4: COMMS & INSTAGRAM CHATS -->
+        <section id="view-comms" class="hidden-view h-full">
+          <div id="comms-hub-menu" class="p-4 space-y-4">
+            <div class="grid grid-cols-2 gap-2.5">
+              <button type="button" onclick="openCommsSubView('announcements')" class="btn-press ig-card p-3.5 flex items-center justify-between gap-2 hover:bg-[#FAFAFA] min-w-0">
+                <div class="text-left min-w-0">
+                  <span class="text-xs font-bold text-[#262626] block truncate">Announcements</span>
+                  <span class="text-[10px] text-[#8E8E8E] block truncate">Team notices</span>
+                </div>
+                <span id="badge-announcements" class="hidden-view min-w-[20px] h-5 px-1.5 rounded-full bg-[#E11D48] text-white text-[10px] font-bold flex items-center justify-center shrink-0">0</span>
+              </button>
+              <button type="button" onclick="openCommsSubView('meetings')" class="btn-press ig-card p-3.5 flex items-center justify-between gap-2 hover:bg-[#FAFAFA] min-w-0">
+                <div class="text-left min-w-0">
+                  <span class="text-xs font-bold text-[#262626] block truncate">Schedule Meeting</span>
+                  <span class="text-[10px] text-[#8E8E8E] block truncate">24/7 slots</span>
+                </div>
+                <span id="badge-meetings" class="hidden-view min-w-[20px] h-5 px-1.5 rounded-full bg-[#E11D48] text-white text-[10px] font-bold flex items-center justify-center shrink-0">0</span>
+              </button>
+            </div>
+            <div class="space-y-2 pt-1">
+              <div class="flex items-center justify-between px-0.5">
+                <p class="text-xs font-bold text-[#262626]">Messages</p>
+                <span class="text-[11px] text-[#8E8E8E]">Team & Private DMs</span>
+              </div>
+              <div id="ig-chat-threads-list" class="divide-y divide-[#EFEFEF] border border-[#DBDBDB] rounded-2xl bg-white overflow-hidden"></div>
+            </div>
+          </div>
+
+          <!-- ANNOUNCEMENTS FEED (WITH CAROUSEL AND CREATOR-ONLY DELETE) -->
+          <div id="comms-sub-announcements" class="hidden-view p-4 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-[#EFEFEF]">
+              <button type="button" onclick="resetCommsHub()" class="text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">← Back</button>
+              <h3 class="text-sm font-semibold text-[#262626]">Announcements</h3>
+              <button type="button" onclick="openAddSubView('announcement')" class="text-xs font-semibold text-[#580A18]">+ New</button>
+            </div>
+            <div id="announcements-list" class="space-y-3"></div>
+          </div>
+
+          <!-- MEETINGS VIEW -->
+          <div id="comms-sub-meetings" class="hidden-view p-4 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-[#EFEFEF]">
+              <button type="button" onclick="resetCommsHub()" class="text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">← Back</button>
+              <h3 class="text-sm font-semibold text-[#262626]">Schedule Meeting</h3>
+              <span class="text-[11px] text-[#8E8E8E]">24/7</span>
+            </div>
+            <div class="ig-card p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-[#8E8E8E]">Book Time Slot</h4>
+                <span id="auto-host-room-note" class="text-[10px] font-medium text-[#580A18]">Auto-uses your Meet room</span>
+              </div>
+              <form onsubmit="scheduleNewMeeting(event)" class="space-y-3">
+                <div>
+                  <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Date</label>
+                  <input id="meet-date-input" type="date" required class="ig-input w-full px-3 py-2 text-xs font-medium" />
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Time From</label>
+                    <input id="meet-start-input" type="time" required class="ig-input w-full px-3 py-2 text-xs font-medium" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-medium text-[#8E8E8E] mb-1">To</label>
+                    <input id="meet-end-input" type="time" required class="ig-input w-full px-3 py-2 text-xs font-medium" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#8E8E8E] mb-1">For (Purpose)</label>
+                  <input id="meet-purpose-input" type="text" required placeholder="e.g. Collection launch & pricing" class="ig-input w-full px-3 py-2 text-xs" />
+                </div>
+                <button type="submit" class="btn-press ig-btn-primary w-full py-2.5 text-xs">
+                  Make Meeting
+                </button>
+              </form>
+            </div>
+            <div class="space-y-2">
+              <h4 class="text-xs font-semibold uppercase tracking-wider text-[#8E8E8E]">Scheduled Meetings</h4>
+              <div id="scheduled-meetings-list" class="space-y-2.5"></div>
+            </div>
+          </div>
+
+          <!-- CHAT THREAD VIEW -->
+          <div id="comms-sub-discuss" class="hidden-view flex flex-col h-[calc(100dvh-120px)] bg-white">
+            <div class="px-4 py-2.5 border-b border-[#EFEFEF] flex items-center justify-between shrink-0 bg-white">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <button type="button" onclick="resetCommsHub()" class="text-base font-semibold text-[#262626] pr-1">←</button>
+                <div id="active-chat-avatar" class="ig-avatar w-8 h-8 text-xs"></div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1">
+                    <h3 id="active-chat-title" class="text-sm font-semibold text-[#262626] leading-tight truncate">TEAM</h3>
+                    <span id="active-chat-tick" class="blue-tick"></span>
+                  </div>
+                  <p id="active-chat-subtitle" class="text-[11px] text-[#8E8E8E] truncate">Ruchita, Anushka, Mihir</p>
+                </div>
+              </div>
+              <span class="w-2 h-2 rounded-full bg-[#16A34A] shrink-0" title="Active"></span>
+            </div>
+            <div id="chat-messages-box" class="flex-1 overflow-y-auto overflow-x-hidden px-4 py-3 space-y-3 bg-white"></div>
+            <form onsubmit="sendChatMessage(event)" class="px-3 py-2.5 bg-white border-t border-[#EFEFEF] shrink-0">
+              <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#DBDBDB] bg-white focus-within:border-[#8E8E8E]">
+                <input id="chat-message-input" type="text" required autocomplete="off" placeholder="Message..." class="flex-1 bg-transparent text-sm text-[#262626] placeholder-[#8E8E8E] outline-none py-1 min-w-0" />
+                <button type="submit" class="text-xs font-semibold text-[#0095F6] hover:text-[#1877F2] px-2 py-1 shrink-0">
+                  Send
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- TAB 5: GRAPHS & FINANCIALS -->
+        <section id="view-graphs" class="hidden-view p-4 space-y-4">
+          <div id="graphs-overview" class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xs font-semibold uppercase tracking-wider text-[#8E8E8E]">Financials</h2>
+              <span class="text-[11px] text-[#8E8E8E]">Tap a chart to edit</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <button type="button" onclick="openGraphSubView('expenditure')" class="btn-press ig-card p-3.5 text-left flex flex-col justify-between h-52 hover:bg-[#FAFAFA]">
+                <div class="flex items-center justify-between w-full">
+                  <span class="text-xs font-semibold text-[#262626]">Expenditure</span>
+                  <span class="text-[11px] font-medium text-[#8E8E8E]">Edit</span>
+                </div>
+                <div class="w-full h-28 flex items-end justify-center pt-2 px-3">
+                  <div class="w-3 h-full y-axis-ticks mr-2"></div>
+                  <div class="flex-1 h-full flex items-end justify-center border-b border-[#DBDBDB]">
+                    <div id="overview-exp-bar" class="w-11 bg-[#E11D48] rounded-t-md transition-all duration-300" style="height: 4%;"></div>
+                  </div>
+                </div>
+                <p id="overview-exp-total" class="text-sm font-bold text-[#E11D48] mt-1">₹0.00</p>
+              </button>
+              <button type="button" onclick="openGraphSubView('gain')" class="btn-press ig-card p-3.5 text-left flex flex-col justify-between h-52 hover:bg-[#FAFAFA]">
+                <div class="flex items-center justify-between w-full">
+                  <span class="text-xs font-semibold text-[#262626]">Gain</span>
+                  <span class="text-[11px] font-medium text-[#8E8E8E]">Edit</span>
+                </div>
+                <div class="w-full h-28 flex items-end justify-center pt-2 px-3">
+                  <div class="w-3 h-full y-axis-ticks mr-2"></div>
+                  <div class="flex-1 h-full flex items-end justify-center border-b border-[#DBDBDB]">
+                    <div id="overview-gain-bar" class="w-11 bg-[#16A34A] rounded-t-md transition-all duration-300" style="height: 4%;"></div>
+                  </div>
+                </div>
+                <p id="overview-gain-total" class="text-sm font-bold text-[#16A34A] mt-1">₹0.00</p>
+              </button>
+            </div>
+            <button type="button" onclick="openGraphSubView('products-sold')" class="btn-press ig-card w-full p-4 text-left space-y-3 hover:bg-[#FAFAFA]">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <h3 class="text-sm font-semibold text-[#262626]">Products</h3>
+                  <p class="text-xs text-[#8E8E8E] truncate">Tap to record or delete sold items</p>
+                </div>
+                <span class="px-3 py-1.5 rounded-lg bg-[#580A18] text-white text-xs font-semibold shrink-0">+ Mark Sold</span>
+              </div>
+              <div class="w-full h-36 flex items-end pt-3 px-2">
+                <div class="w-3 h-full y-axis-ticks mr-2 shrink-0"></div>
+                <div id="overview-products-bars" class="flex-1 h-full flex items-end justify-around gap-2 border-b border-[#DBDBDB] pb-0.5"></div>
+              </div>
+              <div class="flex items-center justify-center gap-5 text-[11px] text-[#8E8E8E]">
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#E11D48] inline-block"></span> Cost / Outflow</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-sm bg-[#16A34A] inline-block"></span> Net Gain</span>
+              </div>
+            </button>
+          </div>
+
+          <div id="graphs-sub-expenditure" class="hidden-view space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-[#EFEFEF]">
+              <button type="button" onclick="resetGraphsHub()" class="text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">← Back</button>
+              <h3 class="text-sm font-semibold text-[#262626]">Expenditure</h3>
+              <span class="w-10"></span>
+            </div>
+            <div class="ig-card p-4 space-y-4">
+              <div class="w-full h-40 flex items-end justify-center pt-2 px-6">
+                <div class="w-4 h-full y-axis-ticks mr-3"></div>
+                <div class="flex-1 h-full flex items-end justify-center border-b border-[#DBDBDB]">
+                  <div id="detail-exp-bar" class="w-16 bg-[#E11D48] rounded-t-lg transition-all duration-300" style="height: 10%;"></div>
+                </div>
+              </div>
+              <div class="p-3 rounded-xl bg-[#FAFAFA] border border-[#EFEFEF] text-center">
+                <p class="text-xs font-semibold text-[#262626]">Change the expenditure</p>
+                <p class="text-[11px] text-[#8E8E8E] mt-0.5">Add the + value (old + new)</p>
+              </div>
+              <form onsubmit="updateManualExpenditure(event)" class="space-y-3">
+                <div class="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label class="block text-[11px] font-medium text-[#8E8E8E] mb-1">Old (Pre-filled ₹)</label>
+                    <input id="exp-old-val" type="number" readonly class="ig-input w-full px-3 py-2 text-sm font-semibold text-[#8E8E8E]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-medium text-[#8E8E8E] mb-1">+ New Fill (₹)</label>
+                    <input id="exp-new-val" type="number" step="0.01" min="0.01" required placeholder="0" oninput="previewOldPlusNew('exp')" class="ig-input w-full px-3 py-2 text-sm font-semibold bg-white" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-[#8E8E8E] mb-1">Expense Note</label>
+                  <input id="exp-note-input" type="text" required placeholder="e.g. Packaging boxes / Ads" class="ig-input w-full px-3 py-2 text-xs bg-white" />
+                </div>
+                <p id="exp-combined-preview" class="text-xs font-semibold text-center text-[#E11D48]">New Total: ₹0.00</p>
+                <button type="submit" class="btn-press w-full py-2.5 rounded-xl bg-[#E11D48] text-white text-xs font-semibold">
+                  Update Expenditure
+                </button>
+              </form>
+            </div>
+            <div id="expense-history-list" class="space-y-2"></div>
+          </div>
+
+          <div id="graphs-sub-gain" class="hidden-view space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-[#EFEFEF]">
+              <button type="button" onclick="resetGraphsHub()" class="text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">← Back</button>
+              <h3 class="text-sm font-semibold text-[#262626]">Gain</h3>
+              <span class="w-10"></span>
+            </div>
+            <div class="ig-card p-4 space-y-4">
+              <div class="w-full h-40 flex items-end justify-center pt-2 px-6">
+                <div class="w-4 h-full y-axis-ticks mr-3"></div>
+                <div class="flex-1 h-full flex items-end justify-center border-b border-[#DBDBDB]">
+                  <div id="detail-gain-bar" class="w-16 bg-[#16A34A] rounded-t-lg transition-all duration-300" style="height: 10%;"></div>
+                </div>
+              </div>
+              <div class="p-3 rounded-xl bg-[#FAFAFA] border border-[#EFEFEF] text-center">
+                <p class="text-xs font-semibold text-[#262626]">Change the value</p>
+                <p class="text-[11px] text-[#8E8E8E] mt-0.5">Add the + value (old + new)</p>
+              </div>
+              <form onsubmit="updateManualGain(event)" class="space-y-3">
+                <div class="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label class="block text-[11px] font-medium text-[#8E8E8E] mb-1">Old (Pre-filled ₹)</label>
+                    <input id="gain-old-val" type="number" readonly class="ig-input w-full px-3 py-2 text-sm font-semibold text-[#8E8E8E]" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-medium text-[#8E8E8E] mb-1">+ New Fill (₹)</label>
+                    <input id="gain-new-val" type="number" step="0.01" min="0.01" required placeholder="0" oninput="previewOldPlusNew('gain')" class="ig-input w-full px-3 py-2 text-sm font-semibold bg-white" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-[#8E8E8E] mb-1">Gain Source Note</label>
+                  <input id="gain-note-input" type="text" required placeholder="e.g. Direct exhibition profit" class="ig-input w-full px-3 py-2 text-xs bg-white" />
+                </div>
+                <p id="gain-combined-preview" class="text-xs font-semibold text-center text-[#16A34A]">New Total: ₹0.00</p>
+                <button type="submit" class="btn-press w-full py-2.5 rounded-xl bg-[#16A34A] text-white text-xs font-semibold">
+                  Update Gain
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div id="graphs-sub-products-sold" class="hidden-view space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-[#EFEFEF]">
+              <button type="button" onclick="resetGraphsHub()" class="text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">← Back</button>
+              <h3 class="text-sm font-semibold text-[#262626]">Products Sold Today</h3>
+              <span class="w-10"></span>
+            </div>
+            <div class="ig-card p-4">
+              <p class="text-xs font-semibold text-[#262626] mb-2">Monthly Sales Overview</p>
+              <div class="w-full h-32 flex items-end pt-2 px-2">
+                <div class="w-3 h-full y-axis-ticks mr-2 shrink-0"></div>
+                <div id="monthly-sales-bars" class="flex-1 h-full flex items-end justify-around gap-2 border-b border-[#DBDBDB]"></div>
+              </div>
+              <div class="flex justify-around text-[10px] font-medium text-[#8E8E8E] mt-1.5 pl-5" id="monthly-sales-labels">
+                <span>Month 1</span><span>Month 2</span><span>Month 3</span>
+              </div>
+            </div>
+            <div class="ig-card p-4 space-y-3.5">
+              <h4 class="text-sm font-semibold text-[#262626]">Add the products sold today</h4>
+              <form onsubmit="recordProductSale(event)" class="space-y-3">
+                <div>
+                  <label class="block text-xs font-medium text-[#8E8E8E] mb-1">1. Select the product</label>
+                  <select id="sale-product-select" required onchange="recalculateSaleBreakdown()" class="ig-input w-full px-3.5 py-2.5 text-xs font-medium bg-white">
+                    <option value="">-- Choose Product from Catalog --</option>
+                  </select>
+                </div>
+                <div id="selected-product-costs-box" class="hidden-view p-3 rounded-xl bg-[#FAFAFA] border border-[#EFEFEF] text-xs space-y-1.5">
+                  <div class="flex justify-between font-semibold text-[#262626]">
+                    <span>Selling Price:</span>
+                    <span id="calc-selling-price">₹0.00</span>
+                  </div>
+                  <div class="flex justify-between text-[#8E8E8E]">
+                    <span>Product Making Cost:</span>
+                    <span id="calc-making-cost">₹0.00</span>
+                  </div>
+                  <div class="flex justify-between text-[#8E8E8E]">
+                    <span>Box Price:</span>
+                    <span id="calc-box-cost">₹0.00</span>
+                  </div>
+                  <div class="flex justify-between text-[#8E8E8E]">
+                    <span>Sticker Price:</span>
+                    <span id="calc-sticker-cost">₹0.00</span>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-[#8E8E8E] mb-1">2. + Add the delivery cost (₹)</label>
+                  <input id="sale-delivery-input" type="number" step="0.01" min="0" value="0" required oninput="recalculateSaleBreakdown()" placeholder="Enter delivery charge" class="ig-input w-full px-3.5 py-2.5 text-sm font-semibold bg-white" />
+                </div>
+                <div class="p-3.5 rounded-xl bg-[#FAFAFA] border border-[#DBDBDB] space-y-1.5 text-xs">
+                  <p class="font-semibold text-[#262626]">Automatic Deductions</p>
+                  <p class="text-[#8E8E8E]">• + ₹2 Bill Charge</p>
+                  <p class="text-[#8E8E8E]">• + 2% of sale value for Razorpay (<span id="calc-razorpay-fee" class="text-[#262626] font-medium">₹0.00</span>)</p>
+                  <div class="border-t border-[#EFEFEF] pt-2 mt-2 flex justify-between items-center">
+                    <span class="font-medium text-[#8E8E8E]">Total Outflow Cost:</span>
+                    <span id="calc-total-cost" class="font-semibold text-[#E11D48]">₹0.00</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="font-semibold text-[#262626]">Net Profit (Gain):</span>
+                    <span id="calc-net-profit" class="text-sm font-bold text-[#16A34A]">₹0.00</span>
+                  </div>
+                </div>
+                <button type="submit" class="btn-press ig-btn-primary w-full py-3 text-xs">
+                  Record Sale & Update Graphs
+                </button>
+              </form>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-[#8E8E8E]">Recorded Sales</h4>
+                <span class="text-[10px] text-[#8E8E8E]">Tap Delete if mistaken</span>
+              </div>
+              <div id="sales-ledger-list" class="space-y-2"></div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- BOTTOM NAVIGATION BAR -->
+      <nav class="w-full h-14 bg-white border-t border-[#EFEFEF] px-3 flex items-center justify-around shrink-0 z-30">
+        <button type="button" data-tab="home" onclick="switchTab('home')" aria-label="Home" class="nav-btn btn-press flex items-center justify-center w-12 h-11 text-[#262626]">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z" />
+          </svg>
+        </button>
+        <button type="button" data-tab="team" onclick="switchTab('team')" aria-label="Team & Products" class="nav-btn btn-press flex items-center justify-center w-12 h-11 text-[#262626]">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM4 20a8 8 0 0116 0" />
+          </svg>
+        </button>
+        <button type="button" data-tab="add" onclick="switchTab('add')" aria-label="Create" class="nav-btn btn-press flex items-center justify-center w-12 h-11 text-[#262626]">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8M8 12h8" />
+          </svg>
+        </button>
+        <button type="button" data-tab="comms" onclick="switchTab('comms')" aria-label="Chats & Meetings" class="nav-btn btn-press relative flex items-center justify-center w-12 h-11 text-[#262626]">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+          </svg>
+          <span id="nav-comms-dot" class="hidden-view absolute top-2.5 right-2.5 w-2.5 h-2.5 rounded-full bg-[#E11D48] border border-white"></span>
+        </button>
+        <button type="button" data-tab="graphs" onclick="switchTab('graphs')" aria-label="Graphs" class="nav-btn btn-press flex items-center justify-center w-12 h-11 text-[#262626]">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 20h16M7 20v-7h2.5v7M11.5 20V8H14v12M16 20v-10h2.5v10" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+
+    <!-- POST OPTIONS MODAL -->
+    <div id="post-options-modal" onclick="closePostOptionsModal()" class="hidden-view fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
+      <div onclick="event.stopPropagation()" class="bg-white border border-[#DBDBDB] rounded-2xl w-full max-w-[360px] overflow-hidden shadow-xl divide-y divide-[#EFEFEF]">
+        <button type="button" onclick="triggerEditPostFromModal()" class="w-full py-3.5 text-sm font-semibold text-[#262626] hover:bg-[#FAFAFA]">
+          Edit Post
+        </button>
+        <button type="button" onclick="triggerDeletePostFromModal()" class="w-full py-3.5 text-sm font-bold text-[#E11D48] hover:bg-[#FAFAFA]">
+          Delete Post
+        </button>
+        <button type="button" onclick="closePostOptionsModal()" class="w-full py-3.5 text-sm font-medium text-[#8E8E8E] hover:bg-[#FAFAFA]">
+          Cancel
+        </button>
+      </div>
+    </div>
+
+    <!-- POST COMMENTS MODAL -->
+    <div id="post-comments-modal" onclick="closePostCommentsModal()" class="hidden-view fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div onclick="event.stopPropagation()" class="bg-white border-t sm:border border-[#DBDBDB] rounded-t-2xl sm:rounded-2xl w-full max-w-[440px] h-[75dvh] flex flex-col overflow-hidden shadow-xl">
+        <div class="px-4 py-3 border-b border-[#EFEFEF] flex items-center justify-between shrink-0">
+          <span class="w-8"></span>
+          <h3 class="text-sm font-bold text-[#262626]">Comments</h3>
+          <button type="button" onclick="closePostCommentsModal()" class="text-lg text-[#8E8E8E] hover:text-[#262626] px-2">×</button>
+        </div>
+        <div id="post-comments-list" class="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-3.5"></div>
+        <form onsubmit="submitPostComment(event)" class="px-3 py-2.5 border-t border-[#EFEFEF] bg-white flex items-center gap-2 shrink-0">
+          <div id="comment-composer-avatar" class="ig-avatar w-8 h-8 text-xs"></div>
+          <input id="post-comment-input" type="text" required autocomplete="off" placeholder="Add a comment..." class="ig-input flex-1 px-3.5 py-2 rounded-full text-xs bg-[#FAFAFA]" />
+          <button type="submit" class="text-xs font-bold text-[#0095F6] hover:text-[#1877F2] px-2">Post</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- HAMBURGER DRAWER -->
+    <div id="drawer-backdrop" onclick="toggleDrawer(false)" class="hidden-view fixed inset-0 bg-black/40 z-40"></div>
+    <aside id="hamburger-drawer" class="hidden-view fixed top-0 left-0 h-full w-72 max-w-[80vw] bg-white border-r border-[#EFEFEF] z-50 flex flex-col justify-between p-5">
+      <div>
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-[#EFEFEF]">
+          <span class="text-sm font-bold tracking-[0.16em] uppercase text-[#580A18]">RUAN JEWELS</span>
+          <button type="button" onclick="toggleDrawer(false)" class="text-lg text-[#8E8E8E] hover:text-[#262626] px-2">×</button>
+        </div>
+        <div class="space-y-1">
+          <button type="button" onclick="drawerNavigate('home')" class="btn-press w-full flex items-center gap-3.5 px-3 py-3 rounded-xl text-left text-sm font-medium text-[#262626] hover:bg-[#FAFAFA]">
+            <svg class="w-5 h-5 text-[#580A18]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z" />
+            </svg>
+            <span>Home</span>
+          </button>
+          <button type="button" onclick="drawerNavigate('team')" class="btn-press w-full flex items-center gap-3.5 px-3 py-3 rounded-xl text-left text-sm font-medium text-[#262626] hover:bg-[#FAFAFA]">
+            <svg class="w-5 h-5 text-[#580A18]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM4 20a8 8 0 0116 0" />
+            </svg>
+            <span>Team and products</span>
+          </button>
+          <button type="button" onclick="drawerNavigate('graphs')" class="btn-press w-full flex items-center gap-3.5 px-3 py-3 rounded-xl text-left text-sm font-medium text-[#262626] hover:bg-[#FAFAFA]">
+            <svg class="w-5 h-5 text-[#580A18]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 20h16M7 20v-7h2.5v7M11.5 20V8H14v12M16 20v-10h2.5v10" />
+            </svg>
+            <span>Graphs</span>
+          </button>
+        </div>
+      </div>
+      <div class="space-y-1.5 border-t border-[#EFEFEF] pt-4">
+        <button type="button" onclick="openSettingsModal()" class="btn-press w-full flex items-center justify-between px-3 py-3 rounded-xl text-sm font-semibold text-[#262626] hover:bg-[#FAFAFA]">
+          <span>Settings</span>
+          <span class="text-[#8E8E8E]">→</span>
+        </button>
+        <button type="button" onclick="logoutUser()" class="btn-press w-full px-3 py-2.5 rounded-xl text-left text-xs font-semibold text-[#E11D48] hover:bg-[#FAFAFA]">
+          Log out
+        </button>
+      </div>
+    </aside>
+
+    <!-- PROFILE MODAL -->
+    <div id="profile-modal" class="hidden-view fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div class="bg-white border border-[#DBDBDB] rounded-2xl w-full max-w-[400px] max-h-[88dvh] overflow-y-auto p-5 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-[#EFEFEF]">
+          <span class="text-xs font-semibold text-[#8E8E8E]">Profile</span>
+          <button type="button" onclick="closeProfileModal()" class="text-lg text-[#8E8E8E] hover:text-[#262626] px-1">×</button>
+        </div>
+        <div id="profile-view-mode" class="space-y-4">
+          <div class="flex items-center gap-4">
+            <div id="modal-prof-avatar" class="ig-avatar w-16 h-16 text-lg"></div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <h3 id="modal-prof-name" class="text-base font-semibold text-[#262626]"></h3>
+                <span class="blue-tick" title="Verified"><svg class="w-4 h-4 text-[#0095F6]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.39 2.39 3.38-.42.84 3.3L21.5 9l-1.39 3.12L21.5 15.2l-2.89 1.73-.84 3.3-3.38-.42L12 22.2l-2.39-2.39-3.38.42-.84-3.3L2.5 15.2l1.39-3.08L2.5 9l2.89-1.73.84-3.3 3.38.42L12 2zm-1.2 13.4l5.2-5.2-1.4-1.4-3.8 3.8-1.8-1.8-1.4 1.4 3.2 3.2z"/></svg></span>
+              </div>
+              <span id="modal-prof-tag" class="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-[#FAFAFA] border border-[#DBDBDB] text-[#580A18] text-xs font-medium"></span>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <p class="text-xs font-semibold text-[#8E8E8E]">Companies / Brands Owned</p>
+            <div id="modal-prof-brands" class="space-y-2"></div>
+          </div>
+          <div id="modal-prof-edit-btn-wrap" class="pt-1">
+            <button type="button" onclick="enableProfileEditMode()" class="btn-press ig-btn-secondary w-full py-2.5 text-xs">
+              Edit Profile
+            </button>
+          </div>
+        </div>
+        <form id="profile-edit-mode" onsubmit="saveMyProfileChanges(event)" class="hidden-view space-y-3.5">
+          <div>
+            <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Profile Photo</label>
+            <input id="edit-prof-avatar-input" type="file" accept="image/*" class="ig-input w-full p-2 text-xs" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Name</label>
+            <input id="edit-prof-name-input" type="text" required class="ig-input w-full px-3 py-2 text-sm font-medium bg-white" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-[#8E8E8E] mb-1">Tag (e.g. Founder / Director)</label>
+            <input id="edit-prof-tag-input" type="text" required class="ig-input w-full px-3 py-2 text-sm font-medium bg-white" />
+          </div>
+          <div class="space-y-2 border-t border-[#EFEFEF] pt-3">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-[#262626]">Brands</label>
+              <button type="button" onclick="addBrandFieldRow()" class="text-xs font-semibold text-[#580A18]">+ Add Brand</button>
+            </div>
+            <div id="edit-brands-list" class="space-y-2"></div>
+          </div>
+          <div class="flex gap-2 pt-2">
+            <button type="button" onclick="cancelProfileEditMode()" class="ig-btn-secondary flex-1 py-2.5 text-xs">Cancel</button>
+            <button type="submit" class="ig-btn-primary flex-1 py-2.5 text-xs">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="hidden-view fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div class="bg-white border border-[#DBDBDB] rounded-2xl w-full max-w-[420px] max-h-[90dvh] overflow-y-auto overflow-x-hidden p-5 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-[#EFEFEF]">
+          <button type="button" onclick="closeSettingsModal()" class="text-xs font-semibold text-[#8E8E8E] hover:text-[#262626]">← Back</button>
+          <span class="text-sm font-bold text-[#262626]">Settings</span>
+          <span class="w-10"></span>
+        </div>
+        <div class="space-y-3">
+          <div class="border border-[#DBDBDB] rounded-2xl divide-y divide-[#EFEFEF] bg-white overflow-hidden">
+            <div class="px-3.5 py-2.5 bg-[#FAFAFA]">
+              <p class="text-[11px] font-bold uppercase tracking-wider text-[#8E8E8E]">Workspace & Brand</p>
+            </div>
+            <div class="p-3.5 space-y-2">
+              <label class="block text-xs font-semibold text-[#262626]">Logo Image (Background-less PNG/SVG)</label>
+              <div class="flex items-center gap-3">
+                <div id="settings-logo-preview" class="w-14 h-14 rounded-xl border border-[#EFEFEF] bg-[#FAFAFA] flex items-center justify-center overflow-hidden shrink-0"></div>
+                <label class="btn-press ig-btn-secondary flex-1 py-2.5 px-3 text-xs text-center cursor-pointer">
+                  Change Logo Image
+                  <input id="settings-logo-upload" type="file" accept="image/*" onchange="handleBrandLogoUpload(this)" class="hidden" />
+                </label>
+              </div>
+            </div>
+            <div class="p-3.5 space-y-1.5">
+              <label class="block text-xs font-semibold text-[#262626]">Admin Email</label>
+              <input id="settings-admin-email" type="email" placeholder="mihir@ruanjewels.com" class="ig-input w-full px-3 py-2 text-xs bg-[#FAFAFA]" />
+            </div>
+          </div>
+
+          <div class="border border-[#DBDBDB] rounded-2xl divide-y divide-[#EFEFEF] bg-white overflow-hidden">
+            <div class="px-3.5 py-2.5 bg-[#FAFAFA]">
+              <p class="text-[11px] font-bold uppercase tracking-wider text-[#8E8E8E]">Google Meet Links</p>
+            </div>
+            <div class="p-3.5 space-y-1">
+              <span class="text-xs font-semibold text-[#262626]">Ruchita's Meet Link</span>
+              <input id="meet-link-ruchita" type="url" class="ig-input w-full px-3 py-2 text-xs bg-[#FAFAFA]" />
+            </div>
+            <div class="p-3.5 space-y-1">
+              <span class="text-xs font-semibold text-[#262626]">Anushka's Meet Link</span>
+              <input id="meet-link-anushka" type="url" class="ig-input w-full px-3 py-2 text-xs bg-[#FAFAFA]" />
+            </div>
+            <div class="p-3.5 space-y-1">
+              <span class="text-xs font-semibold text-[#262626]">Mihir's Meet Link</span>
+              <input id="meet-link-mihir" type="url" class="ig-input w-full px-3 py-2 text-xs bg-[#FAFAFA]" />
+            </div>
+            <div class="p-3 bg-[#FAFAFA]">
+              <button type="button" onclick="saveWorkspaceSettings()" class="btn-press ig-btn-primary w-full py-2.5 text-xs">
+                Save Settings
+              </button>
+            </div>
+          </div>
+
+          <div class="border border-[#DBDBDB] rounded-2xl divide-y divide-[#EFEFEF] bg-white overflow-hidden">
+            <div class="px-3.5 py-2.5 bg-[#FAFAFA] flex items-center justify-between">
+              <p class="text-[11px] font-bold uppercase tracking-wider text-[#8E8E8E]">Post Music Library (MP3)</p>
+              <span id="music-count-badge" class="text-[10px] font-semibold text-[#580A18]">0 songs</span>
+            </div>
+            <div class="p-3.5 space-y-2.5">
+              <label class="btn-press flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl border border-dashed border-[#0095F6] bg-[#F0F7FF] text-[#1877F2] text-xs font-semibold cursor-pointer">
+                <span>+ Add MP3 Songs (Unlimited)</span>
+                <input id="settings-mp3-upload" type="file" accept="audio/mp3,audio/*" multiple onchange="handleMp3SongsUpload(this)" class="hidden" />
+              </label>
+              <div id="settings-songs-list" class="space-y-1.5 max-h-40 overflow-y-auto"></div>
+            </div>
+          </div>
+
+          <div class="border border-[#DBDBDB] rounded-2xl p-3.5 space-y-2 bg-white">
+            <p class="text-xs font-semibold text-[#262626]">APK Data Backup & Sync</p>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" onclick="exportWorkspaceJSON()" class="ig-btn-secondary py-2 text-xs">Export JSON</button>
+              <label class="ig-btn-secondary py-2 text-xs text-center cursor-pointer">
+                Import JSON
+                <input type="file" accept="application/json" onchange="importWorkspaceJSON(this)" class="hidden" />
+              </label>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-[#FAFAFA] border border-[#EFEFEF] text-center space-y-0.5">
+            <p class="text-xs font-semibold text-[#262626]">By Ruchita and Anushka</p>
+            <p class="text-[11px] font-medium text-[#580A18]">Design by Mihir</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- APPLICATION LOGIC WITH FIRESTORE REAL-TIME SYNC & LOCALSTORAGE PERSISTENT SESSION -->
+  <script>
+    const BLUE_TICK_SVG = `<svg class="w-3.5 h-3.5 text-[#0095F6] inline-block shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-label="Verified"><path d="M12 2l2.39 2.39 3.38-.42.84 3.3L21.5 9l-1.39 3.12L21.5 15.2l-2.89 1.73-.84 3.3-3.38-.42L12 22.2l-2.39-2.39-3.38.42-.84-3.3L2.5 15.2l1.39-3.08L2.5 9l2.89-1.73.84-3.3 3.38.42L12 2zm-1.2 13.4l5.2-5.2-1.4-1.4-3.8 3.8-1.8-1.8-1.4 1.4 3.2 3.2z"/></svg>`;
+
+    const DEFAULT_STATE = {
+      currentUserId: null,
+      adminEmail: 'mihir.kanchan@ruanjewels.com',
+      brandLogoDataUrl: null,
+      members: {
+        ruchita: { id: 'ruchita', shortName: 'Ruchita', fullName: 'Ruchita Kanchan', storyTag: 'Founder', profileTag: 'Founder', passcode: 'Ruchita@1512', avatar: null, meetLink: 'https://meet.google.com/vnu-kskd-zui', brands: [{ name: 'RUAN JEWELS', logo: null }] },
+        anushka: { id: 'anushka', shortName: 'Anushka', fullName: 'Anushka Bahirat', storyTag: 'Founder', profileTag: 'Founder', passcode: 'Anushka@2222', avatar: null, meetLink: 'https://meet.google.com/xwa-kmgp-dbt', brands: [{ name: 'RUAN JEWELS', logo: null }] },
+        mihir: { id: 'mihir', shortName: 'Mihir', fullName: 'Mihir Kanchan', storyTag: 'Management', profileTag: 'Director', passcode: 'Mihir@041512', avatar: null, meetLink: 'https://meet.google.com/ipa-vyps-bms', brands: [{ name: 'RUAN JEWELS', logo: null }] }
+      },
+      songs: [],
+      posts: [],
+      products: [],
+      announcements: [],
+      meetings: [],
+      chatThreads: { team: [], anushka_mihir: [], anushka_ruchita: [], mihir_ruchita: [] },
+      lastSeen: { ruchita: { announcements: 0, meetings: 0, threads: {} }, anushka: { announcements: 0, meetings: 0, threads: {} }, mihir: { announcements: 0, meetings: 0, threads: {} } },
+      expenses: [],
+      manualGains: [],
+      sales: []
+    };
+
+    let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    let activeTab = 'home';
+    let viewingProfileId = null;
+    let selectedPostIdForOptions = null;
+    let activeCommentPostId = null;
+    let activeChatThreadKey = 'team';
+    let activeChatPartnerId = null;
+
+    let stagedPostMedia = [];
+    let stagedProductMedia = [];
+    let stagedAnnouncementMedia = [];
+    let unsubscribers = [];
+
+    // FIRESTORE SYNC & LOCALSTORAGE SESSION INITIALIZATION
+    window.addEventListener('firebase-ready', () => {
+      // Check localStorage for persisted session login
+      const persistedUser = localStorage.getItem('ruan_logged_in_user');
+      if (persistedUser && DEFAULT_STATE.members[persistedUser]) {
+        state.currentUserId = persistedUser;
+      }
+      initFirestoreSync();
+    });
+
+    function initFirestoreSync() {
+      if (!window.db) return;
+      const docRef = window.dbDoc(window.db, 'ruanjewels_workspace', 'main_state');
+
+      // Real-time listener across all client devices (posts, products, announcements, meetings, chatThreads, expenses, manualGains, sales)
+      const unsub = window.dbOnSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const cloudData = docSnap.data();
+          const currentId = state.currentUserId || localStorage.getItem('ruan_logged_in_user');
+          state = { ...JSON.parse(JSON.stringify(DEFAULT_STATE)), ...cloudData, currentUserId: currentId };
+         
+          // Secure passwords remain enforced locally
+          state.members.ruchita.passcode = 'Ruchita@1512';
+          state.members.anushka.passcode = 'Anushka@2222';
+          state.members.mihir.passcode = 'Mihir@041512';
+
+          applyBrandLogo();
+          if (state.currentUserId && DEFAULT_STATE.members[state.currentUserId]) {
+            localStorage.setItem('ruan_logged_in_user', state.currentUserId);
+            renderHeaderUser();
+            updateCommsBadges();
+            refreshActiveView();
+            if (document.getElementById('main-workspace').classList.contains('hidden-view')) {
+              enterWorkspace();
+            }
+          }
+        } else {
+          // Initialize cloud doc if first time
+          window.dbSetDoc(docRef, DEFAULT_STATE).catch(() => {});
+        }
+      }, (err) => {
+        console.error("Firestore sync error:", err);
+      });
+      unsubscribers.push(unsub);
+    }
+
+    async function saveState() {
+      try {
+        if (window.db) {
+          const docRef = window.dbDoc(window.db, 'ruanjewels_workspace', 'main_state');
+          await window.dbSetDoc(docRef, state);
+        }
+      } catch (e) {
+        showToast('Cloud sync update failed. Check internet connection.', true);
+      }
+    }
+
+    function refreshActiveView() {
+      if (activeTab === 'home') renderHomeFeed();
+      if (activeTab === 'team') renderTeamAndProducts();
+      if (activeTab === 'comms') {
+        if (!document.getElementById('comms-sub-discuss').classList.contains('hidden-view')) {
+          renderChatMessages();
+        } else if (!document.getElementById('comms-sub-announcements').classList.contains('hidden-view')) {
+          renderAnnouncementsList();
+        } else if (!document.getElementById('comms-sub-meetings').classList.contains('hidden-view')) {
+          renderMeetingsView();
+        } else {
+          updateCommsBadges();
+        }
+      }
+      if (activeTab === 'graphs') {
+        if (!document.getElementById('graphs-sub-expenditure').classList.contains('hidden-view')) {
+          renderExpenseHistory();
+        } else if (!document.getElementById('graphs-sub-products-sold').classList.contains('hidden-view')) {
+          renderMonthlyBarsAndLedger();
+        } else {
+          renderFinancialGraphs();
+        }
+      }
+    }
+
+    let toastTimer = null;
+    function showToast(msg, isError = false) {
+      const banner = document.getElementById('toast-banner');
+      const text = document.getElementById('toast-text');
+      const dot = document.getElementById('toast-dot');
+      text.textContent = msg;
+      dot.style.backgroundColor = isError ? '#E11D48' : '#16A34A';
+      banner.classList.remove('hidden-view');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 3200);
+    }
+
+    function hideToast() {
+      document.getElementById('toast-banner').classList.add('hidden-view');
+    }
+
+    function toggleLoginPasswordVisibility() {
+      const inp = document.getElementById('login-passcode');
+      const btn = document.getElementById('toggle-pass-btn');
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        btn.textContent = 'Hide';
+      } else {
+        inp.type = 'password';
+        btn.textContent = 'Show';
+      }
+    }
+
+    function showForgotPassword(show) {
+      document.getElementById('login-card-view').classList.toggle('hidden-view', show);
+      document.getElementById('forgot-card-view').classList.toggle('hidden-view', !show);
+      document.getElementById('recovery-dispatch-box').classList.add('hidden-view');
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('login-name').value.trim().toLowerCase();
+      const passInput = document.getElementById('login-passcode').value.trim();
+
+      const matchedMember = Object.values(state.members).find(m =>
+        m.shortName.toLowerCase() === nameInput || m.fullName.toLowerCase() === nameInput
+      );
+
+      if (!matchedMember) {
+        showToast('Access restricted to Ruchita, Anushka, or Mihir.', true);
+        return;
+      }
+      if (matchedMember.passcode !== passInput) {
+        showToast('Incorrect password for ' + matchedMember.shortName + '.', true);
+        return;
+      }
+
+      state.currentUserId = matchedMember.id;
+      // Save login session state and currentUserId to browser localStorage
+      localStorage.setItem('ruan_logged_in_user', matchedMember.id);
+      saveState();
+
+      document.getElementById('login-form').reset();
+      document.getElementById('login-passcode').type = 'password';
+      document.getElementById('toggle-pass-btn').textContent = 'Show';
+      enterWorkspace();
+      showToast('Welcome back, ' + matchedMember.shortName);
+    }
+
+    function handleForgotPassword(e) {
+      e.preventDefault();
+      const requesterName = document.getElementById('forgot-name-input').value.trim();
+      if (!requesterName) return;
+
+      const subject = encodeURIComponent('RUAN JEWELS Team App — Password Recovery Request');
+      const bodyText = `Dear Management (Mihir),\n\nThis is an automated password recovery request from the RUAN JEWELS Team Workspace.\n\nMember Name: ${requesterName}\nRequested At: ${new Date().toLocaleString()}\n\nPlease verify and share my login password privately.\n\nRegards,\n${requesterName}\nRUAN JEWELS`;
+      const mailtoUrl = `mailto:${state.adminEmail}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+
+      document.getElementById('recovery-preview-text').textContent = bodyText;
+      document.getElementById('recovery-mailto-link').href = mailtoUrl;
+      document.getElementById('recovery-dispatch-box').classList.remove('hidden-view');
+
+      try { window.location.href = mailtoUrl; } catch (_) {}
+      showToast('Recovery email prepared for Management.');
+    }
+
+    function copyRecoveryText() {
+      const txt = document.getElementById('recovery-preview-text').textContent;
+      const ta = document.createElement('textarea');
+      ta.value = txt;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Copied to clipboard.');
+    }
+
+    function logoutUser() {
+      toggleDrawer(false);
+      state.currentUserId = null;
+      // Clear localStorage session on logout
+      localStorage.removeItem('ruan_logged_in_user');
+      document.getElementById('main-workspace').classList.add('hidden-view');
+      document.getElementById('auth-screen').classList.remove('hidden-view');
+    }
+
+    function enterWorkspace() {
+      document.getElementById('auth-screen').classList.add('hidden-view');
+      document.getElementById('main-workspace').classList.remove('hidden-view');
+      applyBrandLogo();
+      renderHeaderUser();
+      updateCommsBadges();
+      switchTab('home');
+    }
+
+    function applyBrandLogo() {
+      if (!state.brandLogoDataUrl) return;
+      const loginImg = `<img src="${state.brandLogoDataUrl}" alt="RUAN JEWELS" class="w-full h-full object-contain bg-transparent" />`;
+      const headerImg = `<img src="${state.brandLogoDataUrl}" alt="RUAN JEWELS" class="w-full h-full object-contain bg-transparent" />`;
+      document.getElementById('login-logo-holder').innerHTML = loginImg;
+      document.getElementById('header-logo-img').innerHTML = headerImg;
+      const settingsPrev = document.getElementById('settings-logo-preview');
+      if (settingsPrev) settingsPrev.innerHTML = headerImg;
+    }
+
+    function renderAvatarContent(member, sizeClass = 'text-sm') {
+      if (member.avatar) {
+        return `<img src="${member.avatar}" alt="${member.shortName}" class="w-full h-full object-cover" />`;
+      }
+      return `<span class="${sizeClass} font-semibold text-[#580A18]">${member.shortName.charAt(0).toUpperCase()}</span>`;
+    }
+
+    function renderHeaderUser() {
+      const user = state.members[state.currentUserId];
+      if (!user) return;
+      document.getElementById('header-user-avatar').innerHTML = renderAvatarContent(user, 'text-xs');
+    }
+
+    function switchTab(tabName) {
+      activeTab = tabName;
+      const views = ['home', 'team', 'add', 'comms', 'graphs'];
+      views.forEach(v => {
+        document.getElementById('view-' + v).classList.toggle('hidden-view', v !== tabName);
+      });
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const isCurrent = btn.getAttribute('data-tab') === tabName;
+        btn.style.color = isCurrent ? '#580A18' : '#262626';
+        btn.style.opacity = isCurrent ? '1' : '0.55';
+      });
+
+      if (tabName === 'home') renderHomeFeed();
+      if (tabName === 'team') renderTeamAndProducts();
+      if (tabName === 'add') resetAddHub();
+      if (tabName === 'comms') {
+        resetCommsHub();
+        updateCommsBadges();
+      }
+      if (tabName === 'graphs') {
+        resetGraphsHub();
+        renderFinancialGraphs();
+      }
+    }
+
+    function toggleDrawer(open) {
+      document.getElementById('drawer-backdrop').classList.toggle('hidden-view', !open);
+      document.getElementById('hamburger-drawer').classList.toggle('hidden-view', !open);
+    }
+
+    function drawerNavigate(tab) {
+      toggleDrawer(false);
+      switchTab(tab);
+    }
+
+    function openSettingsModal() {
+      toggleDrawer(false);
+      document.getElementById('settings-admin-email').value = state.adminEmail || '';
+      document.getElementById('meet-link-ruchita').value = state.members.ruchita.meetLink || '';
+      document.getElementById('meet-link-anushka').value = state.members.anushka.meetLink || '';
+      document.getElementById('meet-link-mihir').value = state.members.mihir.meetLink || '';
+
+      const logoPrev = document.getElementById('settings-logo-preview');
+      if (state.brandLogoDataUrl) {
+        logoPrev.innerHTML = `<img src="${state.brandLogoDataUrl}" class="w-full h-full object-contain" />`;
+      } else {
+        logoPrev.innerHTML = `<span class="text-xs font-bold text-[#580A18]">RJ</span>`;
+      }
+
+      renderSettingsSongsList();
+      document.getElementById('settings-modal').classList.remove('hidden-view');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settings-modal').classList.add('hidden-view');
+    }
+
+    function handleBrandLogoUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        state.brandLogoDataUrl = ev.target.result;
+        saveState();
+        applyBrandLogo();
+        showToast('Logo updated.');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveWorkspaceSettings() {
+      const emailVal = document.getElementById('settings-admin-email').value.trim();
+      if (emailVal) state.adminEmail = emailVal;
+
+      const rLink = document.getElementById('meet-link-ruchita').value.trim();
+      const aLink = document.getElementById('meet-link-anushka').value.trim();
+      const mLink = document.getElementById('meet-link-mihir').value.trim();
+
+      if (rLink) state.members.ruchita.meetLink = rLink;
+      if (aLink) state.members.anushka.meetLink = aLink;
+      if (mLink) state.members.mihir.meetLink = mLink;
+
+      saveState();
+      closeSettingsModal();
+      showToast('Settings saved.');
+    }
+
+    async function handleMp3SongsUpload(input) {
+      const files = Array.from(input.files || []);
+      if (!files.length) return;
+      for (const file of files) {
+        const dataUrl = await fileToDataURL(file);
+        const cleanTitle = file.name.replace(/\.[^/.]+$/, '');
+        state.songs.push({
+          id: 'song_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          name: cleanTitle,
+          dataUrl
+        });
+      }
+      input.value = '';
+      saveState();
+      renderSettingsSongsList();
+      showToast(`${files.length} song(s) added to library.`);
+    }
+
+    function deleteSongFromLibrary(songId) {
+      state.songs = state.songs.filter(s => s.id !== songId);
+      saveState();
+      renderSettingsSongsList();
+      showToast('Song removed.');
+    }
+
+    function renderSettingsSongsList() {
+      const list = document.getElementById('settings-songs-list');
+      document.getElementById('music-count-badge').textContent = `${state.songs.length} song${state.songs.length === 1 ? '' : 's'}`;
+      if (state.songs.length === 0) {
+        list.innerHTML = `<p class="text-[11px] text-[#8E8E8E] text-center py-2">No MP3 songs added yet.</p>`;
+        return;
+      }
+      list.innerHTML = state.songs.map(song => `
+        <div class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-[#FAFAFA] border border-[#EFEFEF]">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-[#0095F6] text-xs">♪</span>
+            <span class="text-xs font-medium text-[#262626] truncate">${escapeHTML(song.name)}</span>
+          </div>
+          <button type="button" onclick="deleteSongFromLibrary('${song.id}')" class="text-xs font-bold text-[#E11D48] px-1.5">×</button>
+        </div>
+      `).join('');
+    }
+
+    function exportWorkspaceJSON() {
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state));
+      const dl = document.createElement('a');
+      dl.setAttribute('href', dataStr);
+      dl.setAttribute('download', `ruan_jewels_backup_${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(dl);
+      dl.click();
+      dl.remove();
+      showToast('Backup exported.');
+    }
+
+    function importWorkspaceJSON(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const imported = JSON.parse(ev.target.result);
+          if (imported && imported.members) {
+            const currentId = state.currentUserId;
+            state = { ...state, ...imported, currentUserId: currentId };
+            saveState();
+            enterWorkspace();
+            closeSettingsModal();
+            showToast('Workspace restored.');
+          }
+        } catch (err) {
+          showToast('Invalid backup file.', true);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function renderStoriesBar() {
+      const container = document.getElementById('stories-bar-container');
+      const order = ['ruchita', 'anushka', 'mihir'];
+      container.innerHTML = order.map(id => {
+        const m = state.members[id];
+        return `
+          <button type="button" onclick="openProfileModal('${m.id}')" class="btn-press flex flex-col items-center text-center min-w-0">
+            <div class="ig-avatar w-16 h-16">
+              ${renderAvatarContent(m, 'text-lg')}
+            </div>
+            <div class="flex items-center justify-center gap-1 mt-1.5 max-w-full">
+              <span class="text-xs font-semibold text-[#262626] truncate">${m.shortName}</span>
+              ${BLUE_TICK_SVG}
+            </div>
+            <span class="text-[11px] text-[#8E8E8E] leading-tight truncate max-w-full">${m.storyTag}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function openProfileModal(memberId) {
+      viewingProfileId = memberId;
+      const member = state.members[memberId];
+      if (!member) return;
+
+      document.getElementById('profile-view-mode').classList.remove('hidden-view');
+      document.getElementById('profile-edit-mode').classList.add('hidden-view');
+
+      document.getElementById('modal-prof-avatar').innerHTML = renderAvatarContent(member, 'text-xl');
+      document.getElementById('modal-prof-name').textContent = member.fullName;
+      document.getElementById('modal-prof-tag').textContent = member.profileTag;
+
+      const brandsList = document.getElementById('modal-prof-brands');
+      brandsList.innerHTML = member.brands.map(b => `
+        <div class="flex items-center gap-3 p-2.5 rounded-xl bg-[#FAFAFA] border border-[#EFEFEF]">
+          <div class="w-9 h-9 rounded-lg bg-white border border-[#DBDBDB] flex items-center justify-center overflow-hidden shrink-0 font-bold text-xs text-[#580A18]">
+            ${b.logo ? `<img src="${b.logo}" class="w-full h-full object-cover" />` : 'RJ'}
+          </div>
+          <span class="text-xs font-semibold text-[#262626] uppercase">${escapeHTML(b.name)}</span>
+        </div>
+      `).join('');
+
+      const isOwn = state.currentUserId === memberId;
+      document.getElementById('modal-prof-edit-btn-wrap').classList.toggle('hidden-view', !isOwn);
+      document.getElementById('profile-modal').classList.remove('hidden-view');
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profile-modal').classList.add('hidden-view');
+    }
+
+    function enableProfileEditMode() {
+      if (viewingProfileId !== state.currentUserId) return;
+      const member = state.members[viewingProfileId];
+      document.getElementById('profile-view-mode').classList.add('hidden-view');
+      document.getElementById('profile-edit-mode').classList.remove('hidden-view');
+
+      document.getElementById('edit-prof-name-input').value = member.fullName;
+      document.getElementById('edit-prof-tag-input').value = member.profileTag;
+
+      const list = document.getElementById('edit-brands-list');
+      list.innerHTML = '';
+      member.brands.forEach((b, idx) => addBrandFieldRow(b.name, b.logo, idx === 0));
+    }
+
+    function cancelProfileEditMode() {
+      openProfileModal(viewingProfileId);
+    }
+
+    function addBrandFieldRow(nameVal = '', logoVal = null, isPrimary = false) {
+      const list = document.getElementById('edit-brands-list');
+      const row = document.createElement('div');
+      row.className = 'brand-edit-row p-2.5 rounded-xl bg-[#FAFAFA] border border-[#EFEFEF] space-y-2';
+      row.dataset.existingLogo = logoVal || '';
+      row.innerHTML = `
+        <div class="flex items-center gap-2">
+          <input type="text" value="${escapeHTML(nameVal)}" required placeholder="Brand Name" class="brand-name-field ig-input flex-1 px-2.5 py-1.5 text-xs font-medium bg-white" />
+          ${isPrimary ? '<span class="text-[10px] font-semibold px-2 py-1 bg-[#EFEFEF] text-[#262626] rounded">Core</span>' : '<button type="button" onclick="this.closest(\'.brand-edit-row\').remove()" class="px-2 py-1 text-[#E11D48] text-xs font-bold">×</button>'}
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-[#8E8E8E]">
+          <span>Logo (Optional):</span>
+          <input type="file" accept="image/*" class="brand-logo-file text-[10px] w-40" />
+        </div>
+      `;
+      list.appendChild(row);
+    }
+
+    async function saveMyProfileChanges(e) {
+      e.preventDefault();
+      if (viewingProfileId !== state.currentUserId) return;
+      const member = state.members[viewingProfileId];
+
+      member.fullName = document.getElementById('edit-prof-name-input').value.trim();
+      member.shortName = member.fullName.split(' ')[0];
+      member.profileTag = document.getElementById('edit-prof-tag-input').value.trim();
+      member.storyTag = member.profileTag;
+
+      const avatarFile = document.getElementById('edit-prof-avatar-input').files[0];
+      if (avatarFile) {
+        member.avatar = await fileToDataURL(avatarFile);
+      }
+
+      const brandRows = Array.from(document.querySelectorAll('.brand-edit-row'));
+      const updatedBrands = [];
+      for (const row of brandRows) {
+        const bName = row.querySelector('.brand-name-field').value.trim();
+        if (!bName) continue;
+        const fileInp = row.querySelector('.brand-logo-file');
+        let bLogo = row.dataset.existingLogo || null;
+        if (fileInp && fileInp.files[0]) {
+          bLogo = await fileToDataURL(fileInp.files[0]);
+        }
+        updatedBrands.push({ name: bName, logo: bLogo });
+      }
+      member.brands = updatedBrands.length ? updatedBrands : [{ name: 'RUAN JEWELS', logo: null }];
+
+      await saveState();
+      renderHeaderUser();
+      renderStoriesBar();
+      if (activeTab === 'team') renderTeamAndProducts();
+      openProfileModal(viewingProfileId);
+      showToast('Profile updated.');
+    }
+
+    function fileToDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleMultiMediaSelect(input, targetType) {
+      const files = Array.from(input.files || []);
+      if (!files.length) return;
+
+      for (const file of files) {
+        const url = await fileToDataURL(file);
+        const type = file.type.startsWith('video/') ? 'video' : 'image';
+        if (targetType === 'post') {
+          stagedPostMedia.push({ url, type });
+        } else if (targetType === 'product') {
+          stagedProductMedia.push({ url, type });
+        } else if (targetType === 'announcement') {
+          stagedAnnouncementMedia.push({ url, type });
+        }
+      }
+      input.value = '';
+      renderStagedMediaPreview(targetType);
+    }
+
+    function removeStagedMedia(targetType, index) {
+      if (targetType === 'post') {
+        stagedPostMedia.splice(index, 1);
+      } else if (targetType === 'product') {
+        stagedProductMedia.splice(index, 1);
+      } else if (targetType === 'announcement') {
+        stagedAnnouncementMedia.splice(index, 1);
+      }
+      renderStagedMediaPreview(targetType);
+    }
+
+    function renderStagedMediaPreview(targetType) {
+      const list = targetType === 'post' ? stagedPostMedia : (targetType === 'product' ? stagedProductMedia : stagedAnnouncementMedia);
+      const containerId = targetType === 'post' ? 'post-media-preview' : (targetType === 'product' ? 'prod-media-preview' : 'ann-media-preview');
+      const container = document.getElementById(containerId);
+
+      if (list.length === 0) {
+        container.classList.add('hidden-view');
+        container.innerHTML = '';
+        return;
+      }
+
+      container.classList.remove('hidden-view');
+      container.innerHTML = list.map((item, idx) => `
+        <div class="relative aspect-square rounded-xl overflow-hidden border border-[#DBDBDB] bg-black">
+          ${item.type === 'video'
+            ? `<video src="${item.url}" class="w-full h-full object-cover"></video>`
+            : `<img src="${item.url}" class="w-full h-full object-cover" />`
+          }
+          <button type="button" onclick="removeStagedMedia('${targetType}', ${idx})" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/75 text-white text-xs font-bold flex items-center justify-center">×</button>
+        </div>
+      `).join('');
+    }
+
+    function buildInstagramCarouselHTML(mediaItems, containerClass = "w-full max-h-[460px]") {
+      if (!mediaItems || mediaItems.length === 0) return '';
+      if (mediaItems.length === 1) {
+        const m = mediaItems[0];
+        return m.type === 'video'
+          ? `<div class="w-full bg-black"><video src="${m.url}" controls playsinline class="${containerClass} mx-auto block"></video></div>`
+          : `<div class="w-full bg-[#FAFAFA]"><img src="${m.url}" alt="Media" class="${containerClass} object-cover block w-full" /></div>`;
+      }
+
+      return `
+        <div class="relative w-full bg-black group">
+          <div class="ig-carousel ${containerClass}" onscroll="updateCarouselIndicator(this)">
+            ${mediaItems.map((m, idx) => `
+              <div class="ig-carousel-slide flex items-center justify-center bg-black">
+                ${m.type === 'video'
+                  ? `<video src="${m.url}" controls playsinline class="${containerClass} mx-auto block"></video>`
+                  : `<img src="${m.url}" alt="Slide ${idx + 1}" class="${containerClass} object-cover block w-full" />`
+                }
+              </div>
+            `).join('')}
+          </div>
+          <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/70 text-white text-[11px] font-semibold tracking-wide backdrop-blur-sm z-10 carousel-badge">
+            1/${mediaItems.length}
+          </div>
+        </div>
+      `;
+    }
+
+    function updateCarouselIndicator(carouselEl) {
+      const slideWidth = carouselEl.offsetWidth || 1;
+      const scrollLeft = carouselEl.scrollLeft;
+      const currentIndex = Math.round(scrollLeft / slideWidth) + 1;
+      const totalSlides = carouselEl.querySelectorAll('.ig-carousel-slide').length;
+      const badge = carouselEl.parentElement.querySelector('.carousel-badge');
+      if (badge) {
+        badge.textContent = `${currentIndex}/${totalSlides}`;
+      }
+    }
+
+    const BOT_PROFILES = [
+      { name: 'ananya.bridal', text: 'Obsessed with this craftsmanship! Pure royal elegance ✨' },
+      { name: 'kavya_couture', text: 'RUAN JEWELS never misses! The detailing is unreal 😍' },
+      { name: 'meera.luxestyle', text: 'Need this piece in my festive collection immediately! 💎' },
+      { name: 'diya_kapoor99', text: 'So classy and timeless. Best jewellery label right now!' },
+      { name: 'rohan.weddings', text: 'Every bride would fall in love with this design 🔥' },
+      { name: 'simran.vogue', text: 'The finish and lustre look straight out of a royal vault ✨👑' }
+    ];
+
+    function generateAutoEngagement() {
+      const autoLikeCount = Math.floor(Math.random() * 140) + 185;
+      const shuffled = [...BOT_PROFILES].sort(() => 0.5 - Math.random());
+      const pickedBots = shuffled.slice(0, 3).map((b, idx) => ({
+        id: 'bot_c_' + Date.now() + '_' + idx,
+        authorName: b.name,
+        isBot: true,
+        text: b.text,
+        time: 'Just now'
+      }));
+      return { autoLikeCount, comments: pickedBots };
+    }
+
+    function renderHomeFeed() {
+      renderStoriesBar();
+      const feed = document.getElementById('home-posts-feed');
+
+      if (!state.posts || state.posts.length === 0) {
+        feed.innerHTML = `
+          <div class="py-20 px-6 text-center space-y-2.5">
+            <p class="text-2xl font-extrabold tracking-[0.26em] text-[#580A18] uppercase">RUAN JEWELS</p>
+            <p class="text-xs text-[#8E8E8E] max-w-[260px] mx-auto">No posts yet. Tap the <span class="font-semibold text-[#262626]">+</span> icon below to publish your first showcase.</p>
+          </div>
+        `;
+        return;
+      }
+
+      feed.innerHTML = state.posts.slice().reverse().map(post => {
+        const author = state.members[post.authorId] || { fullName: post.authorName, shortName: post.authorName, storyTag: 'RUAN JEWELS' };
+        const canManage = post.authorId === state.currentUserId || state.currentUserId === 'mihir';
+        const isLiked = Array.isArray(post.likes) && post.likes.includes(state.currentUserId);
+        const totalLikes = (post.autoLikeCount || 0) + (Array.isArray(post.likes) ? post.likes.length : 0);
+        const mediaItems = Array.isArray(post.mediaItems) && post.mediaItems.length
+          ? post.mediaItems
+          : (post.mediaUrl ? [{ url: post.mediaUrl, type: post.mediaType || 'image' }] : []);
+        const commentsList = Array.isArray(post.comments) ? post.comments : [];
+        const attachedSong = post.songId ? state.songs.find(s => s.id === post.songId) : null;
+
+        return `
+          <article class="bg-white pb-4">
+            <div class="px-3.5 py-2.5 flex items-center justify-between">
+              <button type="button" onclick="openProfileModal('${post.authorId}')" class="flex items-center gap-2.5 text-left min-w-0">
+                <div class="ig-avatar w-9 h-9 text-xs">${renderAvatarContent(author, 'text-xs')}</div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1">
+                    <p class="text-xs font-bold text-[#262626] leading-tight truncate">${escapeHTML(author.fullName)}</p>
+                    ${BLUE_TICK_SVG}
+                  </div>
+                  <p class="text-[11px] text-[#8E8E8E] leading-tight truncate">${escapeHTML(author.storyTag || 'RUAN JEWELS')}</p>
+                </div>
+              </button>
+              ${canManage ? `
+                <button type="button" onclick="openPostOptionsModal('${post.id}')" aria-label="Post options" class="text-base font-bold text-[#262626] hover:text-[#580A18] px-2.5 py-1 rounded-full hover:bg-[#FAFAFA]">
+                  •••
+                </button>
+              ` : ''}
+            </div>
+
+            ${buildInstagramCarouselHTML(mediaItems, "w-full max-h-[460px]")}
+
+            ${attachedSong ? `
+              <div class="mx-3.5 mt-2.5 px-3 py-2 rounded-xl bg-[#F0F7FF] border border-[#BFDBFE] flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="text-xs font-bold text-[#1877F2]">♪</span>
+                  <span class="text-xs font-semibold text-[#1E3A8A] truncate">${escapeHTML(attachedSong.name)}</span>
+                </div>
+                <audio src="${attachedSong.dataUrl}" controls class="h-7 w-40 shrink-0"></audio>
+              </div>
+            ` : ''}
+
+            <div class="px-3.5 pt-2.5 flex items-center gap-4">
+              <button type="button" onclick="toggleLikePost('${post.id}')" class="btn-press flex items-center gap-1.5 text-[#262626]">
+                <svg class="w-6 h-6 ${isLiked ? 'text-[#E11D48] fill-[#E11D48]' : 'text-[#262626]'}" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                </svg>
+              </button>
+              <button type="button" onclick="openPostCommentsModal('${post.id}')" class="btn-press flex items-center gap-1 text-[#262626]">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="px-3.5 pt-1.5 space-y-1.5">
+              <p class="text-xs font-bold text-[#262626]">${totalLikes.toLocaleString()} likes</p>
+              <p class="text-base font-medium text-[#262626] leading-snug whitespace-pre-line break-words">${escapeHTML(post.description)}</p>
+              ${commentsList.length > 0 ? `
+                <div class="pt-1 space-y-1">
+                  ${commentsList.slice(0, 2).map(c => `
+                    <p class="text-xs text-[#262626] leading-snug">
+                      <span class="font-semibold mr-1">${escapeHTML(c.authorName)}</span>${escapeHTML(c.text)}
+                    </p>
+                  `).join('')}
+                  <button type="button" onclick="openPostCommentsModal('${post.id}')" class="text-xs text-[#8E8E8E] hover:text-[#262626] block pt-0.5">
+                    View all ${commentsList.length} comments
+                  </button>
+                </div>
+              ` : ''}
+              <p class="text-[10px] uppercase text-[#8E8E8E] pt-0.5">${post.timestamp}</p>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    async function toggleLikePost(postId) {
+      const post = state.posts.find(p => p.id === postId);
+      if (!post) return;
+      if (!Array.isArray(post.likes)) post.likes = [];
+      const idx = post.likes.indexOf(state.currentUserId);
+      if (idx >= 0) post.likes.splice(idx, 1);
+      else post.likes.push(state.currentUserId);
+      await saveState();
+      renderHomeFeed();
+    }
+
+    function openPostOptionsModal(postId) {
+      selectedPostIdForOptions = postId;
+      document.getElementById('post-options-modal').classList.remove('hidden-view');
+    }
+
+    function closePostOptionsModal() {
+      document.getElementById('post-options-modal').classList.add('hidden-view');
+    }
+
+    async function triggerDeletePostFromModal() {
+      if (!selectedPostIdForOptions) return;
+      state.posts = state.posts.filter(p => p.id !== selectedPostIdForOptions);
+      selectedPostIdForOptions = null;
+      await saveState();
+      closePostOptionsModal();
+      renderHomeFeed();
+      showToast('Post deleted.');
+    }
+
+    function triggerEditPostFromModal() {
+      const postId = selectedPostIdForOptions;
+      closePostOptionsModal();
+      const post = state.posts.find(p => p.id === postId);
+      if (!post) return;
+
+      openAddSubView('post');
+      document.getElementById('post-form-title').textContent = 'Edit Post';
+      document.getElementById('post-submit-btn').textContent = 'Save Changes';
+      document.getElementById('editing-post-id').value = post.id;
+      document.getElementById('post-desc-input').value = post.description;
+      document.getElementById('post-music-select').value = post.songId || '';
+
+      stagedPostMedia = Array.isArray(post.mediaItems) && post.mediaItems.length
+        ? [...post.mediaItems]
+        : (post.mediaUrl ? [{ url: post.mediaUrl, type: post.mediaType || 'image' }] : []);
+      renderStagedMediaPreview('post');
+    }
+
+    function openPostCommentsModal(postId) {
+      activeCommentPostId = postId;
+      const user = state.members[state.currentUserId];
+      document.getElementById('comment-composer-avatar').innerHTML = renderAvatarContent(user, 'text-xs');
+      renderPostCommentsList();
+      document.getElementById('post-comments-modal').classList.remove('hidden-view');
+    }
+
+    function closePostCommentsModal() {
+      activeCommentPostId = null;
+      document.getElementById('post-comments-modal').classList.add('hidden-view');
+    }
+
+    function renderPostCommentsList() {
+      const post = state.posts.find(p => p.id === activeCommentPostId);
+      const list = document.getElementById('post-comments-list');
+      if (!post || !Array.isArray(post.comments) || post.comments.length === 0) {
+        list.innerHTML = `<p class="text-xs text-[#8E8E8E] text-center py-8">No comments yet. Be the first to comment!</p>`;
+        return;
+      }
+      list.innerHTML = post.comments.map(c => `
+        <div class="flex items-start gap-2.5">
+          <div class="ig-avatar w-8 h-8 text-xs shrink-0">
+            <span class="text-xs font-bold text-[#580A18]">${escapeHTML(c.authorName.charAt(0).toUpperCase())}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1">
+              <span class="text-xs font-bold text-[#262626]">${escapeHTML(c.authorName)}</span>
+              ${!c.isBot ? BLUE_TICK_SVG : ''}
+              <span class="text-[10px] text-[#8E8E8E] ml-1">${c.time || ''}</span>
+            </div>
+            <p class="text-xs text-[#262626] mt-0.5 leading-relaxed break-words">${escapeHTML(c.text)}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function submitPostComment(e) {
+      e.preventDefault();
+      if (!activeCommentPostId) return;
+      const inp = document.getElementById('post-comment-input');
+      const text = inp.value.trim();
+      if (!text) return;
+
+      const post = state.posts.find(p => p.id === activeCommentPostId);
+      if (!post) return;
+      if (!Array.isArray(post.comments)) post.comments = [];
+
+      const user = state.members[state.currentUserId];
+      post.comments.push({
+        id: 'c_' + Date.now(),
+        authorName: user.fullName,
+        isBot: false,
+        text,
+        time: 'Just now'
+      });
+
+      inp.value = '';
+      await saveState();
+      renderPostCommentsList();
+      renderHomeFeed();
+    }
+
+    function renderTeamAndProducts() {
+      const teamList = document.getElementById('team-cards-list');
+      const order = ['ruchita', 'anushka', 'mihir'];
+      teamList.innerHTML = order.map(id => {
+        const m = state.members[id];
+        return `
+          <button type="button" onclick="openProfileModal('${m.id}')" class="btn-press ig-card w-full p-3 flex items-center justify-between text-left hover:bg-[#FAFAFA]">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="ig-avatar w-11 h-11 text-sm">${renderAvatarContent(m, 'text-sm')}</div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1">
+                  <p class="text-sm font-semibold text-[#262626] truncate">${m.fullName}</p>
+                  ${BLUE_TICK_SVG}
+                </div>
+                <p class="text-xs text-[#8E8E8E]">${m.profileTag}</p>
+              </div>
+            </div>
+            <span class="text-xs font-medium text-[#8E8E8E] shrink-0">Brands →</span>
+          </button>
+        `;
+      }).join('');
+
+      const prodGrid = document.getElementById('products-grid-container');
+      if (!state.products || state.products.length === 0) {
+        prodGrid.innerHTML = `
+          <div class="col-span-2 ig-card p-8 text-center space-y-1 bg-[#FAFAFA]">
+            <p class="text-xs font-semibold text-[#262626]">No products added yet</p>
+            <p class="text-[11px] text-[#8E8E8E]">Tap + Add Product to build your catalog.</p>
+          </div>
+        `;
+        return;
+      }
+
+      prodGrid.innerHTML = state.products.slice().reverse().map(prod => {
+        const soldCount = (state.sales || []).filter(s => s.productId === prod.id).length;
+        const canDeleteProduct = prod.createdBy === state.currentUserId;
+        const mediaList = Array.isArray(prod.mediaItems) && prod.mediaItems.length
+          ? prod.mediaItems
+          : (prod.mediaUrl ? [{ url: prod.mediaUrl, type: prod.mediaType || 'image' }] : []);
+        const firstMedia = mediaList[0] || null;
+
+        return `
+          <div class="ig-card overflow-hidden flex flex-col justify-between bg-white">
+            <div>
+              <div class="relative w-full aspect-square bg-[#FAFAFA] border-b border-[#EFEFEF] flex items-center justify-center overflow-hidden">
+                ${firstMedia
+                  ? (firstMedia.type === 'video'
+                      ? `<video src="${firstMedia.url}" class="w-full h-full object-cover"></video>`
+                      : `<img src="${firstMedia.url}" alt="${escapeHTML(prod.name)}" class="w-full h-full object-cover" />`)
+                  : `<span class="text-xs font-semibold text-[#8E8E8E]">RUAN JEWELS</span>`
+                }
+                ${mediaList.length > 1 ? `<span class="absolute top-2 right-2 px-1.5 py-0.5 rounded-md bg-black/70 text-white text-[10px] font-semibold">+${mediaList.length - 1}</span>` : ''}
+                <span class="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-white/95 border border-[#DBDBDB] text-[#16A34A] text-[10px] font-bold shadow-sm">
+                  ${soldCount} sold
+                </span>
+              </div>
+              <div class="p-2.5 space-y-1">
+                <p class="text-xs font-semibold text-[#262626] truncate">${escapeHTML(prod.name)}</p>
+                <p class="text-xs font-bold text-[#580A18]">Sale price: ₹${Number(prod.sellingPrice).toFixed(0)}</p>
+                <div class="text-[11px] text-[#8E8E8E] space-y-0.5 pt-1 border-t border-[#EFEFEF]">
+                  <p>Box - ₹${Number(prod.boxPrice).toFixed(0)}</p>
+                  <p>Sticker - ₹${Number(prod.stickerPrice).toFixed(0)}</p>
+                  <p>Product - ₹${Number(prod.makingPrice).toFixed(0)}</p>
+                </div>
+              </div>
+            </div>
+            ${canDeleteProduct
+              ? `<button type="button" onclick="deleteProduct('${prod.id}')" class="w-full py-1.5 border-t border-[#EFEFEF] text-[11px] font-semibold text-[#E11D48] hover:bg-[#FAFAFA]">Delete</button>`
+              : `<div class="w-full py-1.5 border-t border-[#EFEFEF] text-[10px] text-center text-[#8E8E8E]">Added by ${escapeHTML(prod.createdByName || 'Team')}</div>`
+            }
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function deleteProduct(id) {
+      const prod = state.products.find(p => p.id === id);
+      if (!prod) return;
+      if (prod.createdBy !== state.currentUserId) {
+        showToast('Only the member who added this product can delete it.', true);
+        return;
+      }
+      state.products = state.products.filter(p => p.id !== id);
+      await saveState();
+      renderTeamAndProducts();
+      showToast('Product deleted.');
+    }
+
+    function resetAddHub() {
+      document.getElementById('add-hub-menu').classList.remove('hidden-view');
+      document.getElementById('add-form-post').classList.add('hidden-view');
+      document.getElementById('add-form-product').classList.add('hidden-view');
+      document.getElementById('add-form-announcement').classList.add('hidden-view');
+
+      document.getElementById('post-form-title').textContent = 'New Post';
+      document.getElementById('post-submit-btn').textContent = 'Publish';
+      document.getElementById('editing-post-id').value = '';
+      document.getElementById('post-desc-input').value = '';
+      stagedPostMedia = [];
+      stagedProductMedia = [];
+      stagedAnnouncementMedia = [];
+      renderStagedMediaPreview('post');
+      renderStagedMediaPreview('product');
+      renderStagedMediaPreview('announcement');
+    }
+
+    function openAddSubView(type) {
+      if (activeTab !== 'add') switchTab('add');
+      document.getElementById('add-hub-menu').classList.add('hidden-view');
+      document.getElementById('add-form-post').classList.toggle('hidden-view', type !== 'post');
+      document.getElementById('add-form-product').classList.toggle('hidden-view', type !== 'product');
+      document.getElementById('add-form-announcement').classList.toggle('hidden-view', type !== 'announcement');
+
+      if (type === 'post') {
+        const user = state.members[state.currentUserId];
+        document.getElementById('post-author-avatar').innerHTML = renderAvatarContent(user, 'text-xs');
+        document.getElementById('post-author-name').textContent = user.fullName;
+        document.getElementById('post-author-tag').textContent = user.profileTag || 'RUAN JEWELS';
+
+        const musicSelect = document.getElementById('post-music-select');
+        musicSelect.innerHTML = `<option value="">No Music</option>` +
+          state.songs.map(s => `<option value="${s.id}">♪ ${escapeHTML(s.name)}</option>`).join('');
+      }
+    }
+
+    async function submitNewPost(e) {
+      e.preventDefault();
+      const desc = document.getElementById('post-desc-input').value.trim();
+      const editingId = document.getElementById('editing-post-id').value;
+      const songId = document.getElementById('post-music-select').value || null;
+
+      if (editingId) {
+        const existing = state.posts.find(p => p.id === editingId);
+        if (existing) {
+          existing.description = desc;
+          existing.mediaItems = [...stagedPostMedia];
+          existing.songId = songId;
+        }
+        await saveState();
+        resetAddHub();
+        switchTab('home');
+        showToast('Post updated.');
+        return;
+      }
+
+      const user = state.members[state.currentUserId];
+      const autoEngage = generateAutoEngagement();
+
+      state.posts.push({
+        id: 'post_' + Date.now(),
+        authorId: user.id,
+        authorName: user.fullName,
+        mediaItems: [...stagedPostMedia],
+        songId,
+        description: desc,
+        likes: [],
+        autoLikeCount: autoEngage.autoLikeCount,
+        comments: autoEngage.comments,
+        timestamp: new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })
+      });
+
+      await saveState();
+      resetAddHub();
+      switchTab('home');
+      showToast('Published to feed!');
+    }
+
+    async function submitNewProduct(e) {
+      e.preventDefault();
+      const user = state.members[state.currentUserId];
+
+      state.products.push({
+        id: 'prod_' + Date.now(),
+        name: document.getElementById('prod-name-input').value.trim(),
+        sellingPrice: parseFloat(document.getElementById('prod-selling-input').value) || 0,
+        boxPrice: parseFloat(document.getElementById('prod-box-input').value) || 0,
+        stickerPrice: parseFloat(document.getElementById('prod-sticker-input').value) || 0,
+        makingPrice: parseFloat(document.getElementById('prod-making-input').value) || 0,
+        mediaItems: [...stagedProductMedia],
+        createdBy: user.id,
+        createdByName: user.shortName
+      });
+
+      await saveState();
+      e.target.reset();
+      stagedProductMedia = [];
+      renderStagedMediaPreview('product');
+      switchTab('team');
+      showToast('Product added.');
+    }
+
+    async function submitNewAnnouncement(e) {
+      e.preventDefault();
+      const user = state.members[state.currentUserId];
+
+      state.announcements.push({
+        id: 'ann_' + Date.now(),
+        createdAt: Date.now(),
+        authorId: user.id,
+        authorName: user.fullName,
+        subject: document.getElementById('ann-subject-input').value.trim(),
+        body: document.getElementById('ann-body-input').value.trim(),
+        mediaItems: [...stagedAnnouncementMedia],
+        timestamp: new Date().toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }),
+        replies: []
+      });
+
+      ensureUserLastSeen();
+      state.lastSeen[state.currentUserId].announcements = Date.now();
+
+      await saveState();
+      e.target.reset();
+      stagedAnnouncementMedia = [];
+      renderStagedMediaPreview('announcement');
+      switchTab('comms');
+      openCommsSubView('announcements');
+      showToast('Announcement posted.');
+    }
+
+    function ensureUserLastSeen() {
+      if (!state.lastSeen) state.lastSeen = {};
+      if (!state.lastSeen[state.currentUserId]) {
+        state.lastSeen[state.currentUserId] = { announcements: 0, meetings: 0, threads: {} };
+      }
+      if (!state.lastSeen[state.currentUserId].threads) {
+        state.lastSeen[state.currentUserId].threads = {};
+      }
+    }
+
+    function getPrivateThreadKey(id1, id2) {
+      return [id1, id2].sort().join('_');
+    }
+
+    function getUnreadCountsForCurrentUser() {
+      ensureUserLastSeen();
+      const seen = state.lastSeen[state.currentUserId] || { announcements: 0, meetings: 0, threads: {} };
+
+      const unreadAnn = (state.announcements || []).filter(a =>
+        (a.createdAt || 0) > (seen.announcements || 0) && a.authorId !== state.currentUserId
+      ).length;
+
+      const unreadMeet = (state.meetings || []).filter(m =>
+        (m.createdAt || 0) > (seen.meetings || 0) && m.hostId !== state.currentUserId
+      ).length;
+
+      const threadUnreads = {};
+      let totalUnreadChats = 0;
+
+      const teamLastSeen = seen.threads['team'] || 0;
+      const teamUnread = (state.chatThreads.team || []).filter(msg =>
+        (msg.createdAt || 0) > teamLastSeen && msg.senderId !== state.currentUserId
+      ).length;
+      threadUnreads['team'] = teamUnread;
+      totalUnreadChats += teamUnread;
+
+      ['ruchita', 'anushka', 'mihir'].forEach(otherId => {
+        if (otherId === state.currentUserId) return;
+        const key = getPrivateThreadKey(state.currentUserId, otherId);
+        const lastSeenTs = seen.threads[key] || 0;
+        const count = (state.chatThreads[key] || []).filter(msg =>
+          (msg.createdAt || 0) > lastSeenTs && msg.senderId !== state.currentUserId
+        ).length;
+        threadUnreads[key] = count;
+        totalUnreadChats += count;
+      });
+
+      return { unreadAnn, unreadMeet, threadUnreads, totalUnreadChats };
+    }
+
+    function updateCommsBadges() {
+      const { unreadAnn, unreadMeet, totalUnreadChats } = getUnreadCountsForCurrentUser();
+
+      const annBadge = document.getElementById('badge-announcements');
+      annBadge.textContent = unreadAnn;
+      annBadge.classList.toggle('hidden-view', unreadAnn === 0);
+
+      const meetBadge = document.getElementById('badge-meetings');
+      meetBadge.textContent = unreadMeet;
+      meetBadge.classList.toggle('hidden-view', unreadMeet === 0);
+
+      const navDot = document.getElementById('nav-comms-dot');
+      const hasAnyUnread = (unreadAnn + unreadMeet + totalUnreadChats) > 0;
+      navDot.classList.toggle('hidden-view', !hasAnyUnread);
+
+      renderChatThreadsList();
+    }
+
+    function renderChatThreadsList() {
+      const container = document.getElementById('ig-chat-threads-list');
+      if (!container) return;
+
+      const { threadUnreads } = getUnreadCountsForCurrentUser();
+      const rows = [];
+
+      const teamMsgs = state.chatThreads.team || [];
+      const lastTeamMsg = teamMsgs[teamMsgs.length - 1];
+      const teamUnread = threadUnreads['team'] || 0;
+
+      rows.push(`
+        <button type="button" onclick="openChatThread('team', null)" class="btn-press w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left hover:bg-[#FAFAFA]">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="ig-avatar w-12 h-12 text-xs bg-[#F0F7FF] border-[#BFDBFE] text-[#1877F2] font-extrabold">RJ</div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-1">
+                <span class="text-sm font-bold text-[#262626]">TEAM</span>
+                ${BLUE_TICK_SVG}
+              </div>
+              <p class="text-xs ${teamUnread > 0 ? 'font-bold text-[#262626]' : 'text-[#8E8E8E]'} truncate">
+                ${lastTeamMsg ? `${escapeHTML(lastTeamMsg.senderName)}: ${escapeHTML(lastTeamMsg.text)}` : 'Ruchita, Anushka & Mihir group chat'}
+              </p>
+            </div>
+          </div>
+          ${teamUnread > 0 ? `<span class="w-2.5 h-2.5 rounded-full bg-[#E11D48] shrink-0"></span>` : `<span class="text-xs text-[#8E8E8E]">›</span>`}
+        </button>
+      `);
+
+      ['anushka', 'ruchita', 'mihir'].forEach(memberId => {
+        if (memberId === state.currentUserId) return;
+        const m = state.members[memberId];
+        const key = getPrivateThreadKey(state.currentUserId, memberId);
+        const msgs = state.chatThreads[key] || [];
+        const lastMsg = msgs[msgs.length - 1];
+        const unread = threadUnreads[key] || 0;
+
+        rows.push(`
+          <button type="button" onclick="openChatThread('${key}', '${memberId}')" class="btn-press w-full px-4 py-3.5 flex items-center justify-between gap-3 text-left hover:bg-[#FAFAFA]">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="ig-avatar w-12 h-12 text-sm">${renderAvatarContent(m, 'text-sm')}</div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1">
+                  <span class="text-sm font-bold text-[#262626] uppercase">${escapeHTML(m.shortName)}</span>
+                  ${BLUE_TICK_SVG}
+                </div>
+                <p class="text-xs ${unread > 0 ? 'font-bold text-[#262626]' : 'text-[#8E8E8E]'} truncate">
+                  ${lastMsg ? escapeHTML(lastMsg.text) : `Private chat with ${m.shortName}`}
+                </p>
+              </div>
+            </div>
+            ${unread > 0 ? `<span class="w-2.5 h-2.5 rounded-full bg-[#E11D48] shrink-0"></span>` : `<span class="text-xs text-[#8E8E8E]">›</span>`}
+          </button>
+        `);
+      });
+
+      container.innerHTML = rows.join('');
+    }
+
+    function resetCommsHub() {
+      document.getElementById('comms-hub-menu').classList.remove('hidden-view');
+      document.getElementById('comms-sub-announcements').classList.add('hidden-view');
+      document.getElementById('comms-sub-meetings').classList.add('hidden-view');
+      document.getElementById('comms-sub-discuss').classList.add('hidden-view');
+      updateCommsBadges();
+    }
+
+    function openCommsSubView(sub) {
+      ensureUserLastSeen();
+      document.getElementById('comms-hub-menu').classList.add('hidden-view');
+      document.getElementById('comms-sub-announcements').classList.toggle('hidden-view', sub !== 'announcements');
+      document.getElementById('comms-sub-meetings').classList.toggle('hidden-view', sub !== 'meetings');
+      document.getElementById('comms-sub-discuss').classList.toggle('hidden-view', sub !== 'discuss');
+
+      if (sub === 'announcements') {
+        state.lastSeen[state.currentUserId].announcements = Date.now();
+        saveState();
+        updateCommsBadges();
+        renderAnnouncementsList();
+      }
+      if (sub === 'meetings') {
+        state.lastSeen[state.currentUserId].meetings = Date.now();
+        saveState();
+        updateCommsBadges();
+        renderMeetingsView();
+      }
+    }
+
+    async function openChatThread(threadKey, partnerId) {
+      ensureUserLastSeen();
+      activeChatThreadKey = threadKey;
+      activeChatPartnerId = partnerId;
+
+      state.lastSeen[state.currentUserId].threads[threadKey] = Date.now();
+      await saveState();
+      updateCommsBadges();
+
+      document.getElementById('comms-hub-menu').classList.add('hidden-view');
+      document.getElementById('comms-sub-discuss').classList.remove('hidden-view');
+
+      const avatarEl = document.getElementById('active-chat-avatar');
+      const titleEl = document.getElementById('active-chat-title');
+      const subEl = document.getElementById('active-chat-subtitle');
+      const tickEl = document.getElementById('active-chat-tick');
+
+      if (threadKey === 'team') {
+        avatarEl.innerHTML = `<span class="text-xs font-extrabold text-[#1877F2]">RJ</span>`;
+        titleEl.textContent = 'TEAM';
+        subEl.textContent = 'Ruchita, Anushka, Mihir';
+        tickEl.innerHTML = BLUE_TICK_SVG;
+      } else {
+        const partner = state.members[partnerId];
+        avatarEl.innerHTML = renderAvatarContent(partner, 'text-xs');
+        titleEl.textContent = partner.fullName;
+        subEl.textContent = `Private DM • ${partner.profileTag}`;
+        tickEl.innerHTML = BLUE_TICK_SVG;
+      }
+      renderChatMessages();
+    }
+
+    function renderAnnouncementsList() {
+      const list = document.getElementById('announcements-list');
+      if (!state.announcements || state.announcements.length === 0) {
+        list.innerHTML = `<div class="ig-card p-8 text-center text-xs text-[#8E8E8E] bg-[#FAFAFA]">No announcements yet.</div>`;
+        return;
+      }
+
+      list.innerHTML = state.announcements.slice().reverse().map(ann => {
+        const author = state.members[ann.authorId] || { fullName: ann.authorName, shortName: ann.authorName };
+        const mediaItems = Array.isArray(ann.mediaItems) && ann.mediaItems.length
+          ? ann.mediaItems
+          : (ann.imageUrl ? [{ url: ann.imageUrl, type: 'image' }] : []);
+        const canDeleteAnnouncement = ann.authorId === state.currentUserId || state.currentUserId === 'mihir';
+
+        return `
+          <div class="ig-card p-4 space-y-3 bg-white">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="ig-avatar w-8 h-8 text-xs shrink-0">${renderAvatarContent(author, 'text-xs')}</div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1">
+                    <p class="text-xs font-semibold text-[#262626] truncate">${escapeHTML(author.fullName)}</p>
+                    ${BLUE_TICK_SVG}
+                  </div>
+                  <p class="text-[11px] text-[#8E8E8E]">${ann.timestamp}</p>
+                </div>
+              </div>
+              ${canDeleteAnnouncement ? `
+                <button type="button" onclick="deleteAnnouncement('${ann.id}')" title="Delete announcement" class="btn-press px-2 py-1 rounded-lg bg-[#FFF1F2] text-[#E11D48] text-[11px] font-bold hover:bg-[#FFE4E6]">
+                  Delete
+                </button>
+              ` : ''}
+            </div>
+
+            <div>
+              <h4 class="text-sm font-semibold text-[#262626]">${escapeHTML(ann.subject)}</h4>
+              ${buildInstagramCarouselHTML(mediaItems, "w-full max-h-60 rounded-xl border border-[#EFEFEF] my-2")}
+              <p class="text-xs text-[#262626] mt-1 whitespace-pre-line leading-relaxed">${escapeHTML(ann.body)}</p>
+            </div>
+
+            <div class="border-t border-[#EFEFEF] pt-2.5 space-y-1.5">
+              ${(ann.replies || []).map(r => `
+                <div class="px-3 py-1.5 rounded-xl bg-[#FAFAFA] text-xs">
+                  <span class="font-semibold text-[#262626] mr-1">${escapeHTML(r.sender)}</span>
+                  <span class="text-[#262626]">${escapeHTML(r.text)}</span>
+                </div>
+              `).join('')}
+
+              <form onsubmit="replyToAnnouncement(event, '${ann.id}')" class="flex gap-2 pt-1">
+                <input type="text" required placeholder="Add a reply..." class="ig-input flex-1 px-3 py-1.5 rounded-full text-xs bg-white" />
+                <button type="submit" class="text-xs font-semibold text-[#580A18] px-2">Reply</button>
+              </form>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function deleteAnnouncement(annId) {
+      const ann = state.announcements.find(a => a.id === annId);
+      if (!ann) return;
+      if (ann.authorId !== state.currentUserId && state.currentUserId !== 'mihir') {
+        showToast('Only the person who made this announcement can delete it.', true);
+        return;
+      }
+      state.announcements = state.announcements.filter(a => a.id !== annId);
+      await saveState();
+      renderAnnouncementsList();
+      updateCommsBadges();
+      showToast('Announcement deleted.');
+    }
+
+    async function replyToAnnouncement(e, annId) {
+      e.preventDefault();
+      const input = e.target.querySelector('input');
+      const text = input.value.trim();
+      if (!text) return;
+      const ann = state.announcements.find(a => a.id === annId);
+      if (!ann) return;
+      if (!Array.isArray(ann.replies)) ann.replies = [];
+      ann.replies.push({
+        sender: state.members[state.currentUserId].shortName,
+        text
+      });
+      await saveState();
+      renderAnnouncementsList();
+    }
+
+    function renderMeetingsView() {
+      const todayISO = new Date().toISOString().slice(0, 10);
+      const dateInp = document.getElementById('meet-date-input');
+      if (!dateInp.value) dateInp.value = todayISO;
+
+      const currentUser = state.members[state.currentUserId];
+      document.getElementById('auto-host-room-note').textContent = `Uses ${currentUser.shortName}'s Meet room`;
+
+      const list = document.getElementById('scheduled-meetings-list');
+      if (!state.meetings || state.meetings.length === 0) {
+        list.innerHTML = `<div class="ig-card p-6 text-center text-xs text-[#8E8E8E] bg-[#FAFAFA]">No meetings scheduled yet.</div>`;
+        return;
+      }
+
+      list.innerHTML = state.meetings.map(mt => {
+        const host = state.members[mt.hostId] || { fullName: mt.hostName, shortName: mt.hostName, meetLink: 'https://meet.google.com/new' };
+        const roomLink = host.meetLink;
+        return `
+          <div class="ig-card p-4 space-y-2.5 bg-white">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1">
+                  <p class="text-xs font-bold text-[#262626]">${escapeHTML(host.fullName)}</p>
+                  ${BLUE_TICK_SVG}
+                </div>
+                <p class="text-xs text-[#262626] mt-0.5">For: ${escapeHTML(mt.purpose)}</p>
+                <p class="text-[11px] font-medium text-[#8E8E8E] mt-1">${mt.date} • ${mt.startTime} to ${mt.endTime}</p>
+              </div>
+              <button type="button" onclick="cancelMeeting('${mt.id}')" title="Cancel Meeting" class="btn-press w-8 h-8 rounded-full border border-[#DBDBDB] text-[#E11D48] font-semibold text-base flex items-center justify-center shrink-0 hover:bg-[#FAFAFA]">
+                ×
+              </button>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-[#EFEFEF]">
+              <a href="${escapeHTML(roomLink)}" target="_blank" rel="noopener" class="text-xs font-semibold text-[#580A18] hover:underline truncate max-w-[230px]">
+                Join ${host.shortName}'s Google Meet ↗
+              </a>
+              <a href="${escapeHTML(roomLink)}" target="_blank" rel="noopener" class="w-7 h-7 rounded-full bg-[#16A34A] text-white flex items-center justify-center font-semibold text-xs shrink-0">
+                ✓
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function scheduleNewMeeting(e) {
+      e.preventDefault();
+      const date = document.getElementById('meet-date-input').value;
+      const startTime = document.getElementById('meet-start-input').value;
+      const endTime = document.getElementById('meet-end-input').value;
+      const purpose = document.getElementById('meet-purpose-input').value.trim();
+
+      if (startTime >= endTime) {
+        showToast('End time must be after start time.', true);
+        return;
+      }
+
+      const conflict = (state.meetings || []).find(m =>
+        m.date === date && (startTime < m.endTime && endTime > m.startTime)
+      );
+
+      if (conflict) {
+        showToast(`Time slot busy: ${conflict.hostName} (${conflict.startTime}–${conflict.endTime}).`, true);
+        return;
+      }
+
+      const host = state.members[state.currentUserId];
+      state.meetings.push({
+        id: 'meet_' + Date.now(),
+        createdAt: Date.now(),
+        hostId: host.id,
+        hostName: host.fullName,
+        date,
+        startTime,
+        endTime,
+        purpose
+      });
+
+      ensureUserLastSeen();
+      state.lastSeen[state.currentUserId].meetings = Date.now();
+
+      await saveState();
+      document.getElementById('meet-purpose-input').value = '';
+      renderMeetingsView();
+      updateCommsBadges();
+      showToast(`Meeting scheduled with ${host.shortName}'s Meet link.`);
+    }
+
+    async function cancelMeeting(meetingId) {
+      state.meetings = state.meetings.filter(m => m.id !== meetingId);
+      await saveState();
+      renderMeetingsView();
+      updateCommsBadges();
+      showToast('Meeting cancelled.');
+    }
+
+    function renderChatMessages() {
+      const box = document.getElementById('chat-messages-box');
+      const threadMsgs = state.chatThreads[activeChatThreadKey] || [];
+
+      if (threadMsgs.length === 0) {
+        box.innerHTML = `<div class="h-full flex items-center justify-center text-center p-6"><p class="text-[#8E8E8E] text-xs">No messages yet. Say hello!</p></div>`;
+        return;
+      }
+
+      box.innerHTML = threadMsgs.map(msg => {
+        const isMe = msg.senderId === state.currentUserId;
+        const sender = state.members[msg.senderId] || { shortName: msg.senderName };
+
+        if (isMe) {
+          return `
+            <div class="flex flex-col items-end">
+              <div class="max-w-[78%] px-4 py-2.5 rounded-[22px] bg-[#0095F6] text-white text-xs leading-relaxed break-words">
+                ${escapeHTML(msg.text)}
+              </div>
+              <span class="text-[10px] text-[#8E8E8E] mt-1 px-1">${msg.time}</span>
+            </div>
+          `;
+        }
+        return `
+          <div class="flex flex-col items-start">
+            ${activeChatThreadKey === 'team' ? `<span class="text-[10px] font-medium text-[#8E8E8E] ml-9 mb-0.5">${escapeHTML(sender.shortName)}</span>` : ''}
+            <div class="flex items-end gap-2 max-w-[82%]">
+              <div class="ig-avatar w-7 h-7 text-[10px]">${renderAvatarContent(sender, 'text-[10px]')}</div>
+              <div class="px-4 py-2.5 rounded-[22px] bg-[#EFEFEF] text-[#262626] text-xs leading-relaxed break-words">
+                ${escapeHTML(msg.text)}
+              </div>
+            </div>
+            <span class="text-[10px] text-[#8E8E8E] mt-1 ml-9">${msg.time}</span>
+          </div>
+        `;
+      }).join('');
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendChatMessage(e) {
+      e.preventDefault();
+      const inp = document.getElementById('chat-message-input');
+      const text = inp.value.trim();
+      if (!text) return;
+
+      if (!state.chatThreads[activeChatThreadKey]) {
+        state.chatThreads[activeChatThreadKey] = [];
+      }
+
+      const user = state.members[state.currentUserId];
+      const nowTs = Date.now();
+      state.chatThreads[activeChatThreadKey].push({
+        id: 'msg_' + nowTs,
+        createdAt: nowTs,
+        senderId: user.id,
+        senderName: user.shortName,
+        text,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+
+      ensureUserLastSeen();
+      state.lastSeen[state.currentUserId].threads[activeChatThreadKey] = nowTs;
+
+      await saveState();
+      inp.value = '';
+      renderChatMessages();
+      updateCommsBadges();
+    }
+
+    function getFinancialTotals() {
+      const manualExp = (state.expenses || []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const salesOutflow = (state.sales || []).reduce((sum, s) => sum + Number(s.totalCost || 0), 0);
+      const totalExpenditure = manualExp + salesOutflow;
+
+      const manualGain = (state.manualGains || []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      const salesProfit = (state.sales || []).reduce((sum, s) => sum + Number(s.netProfit || 0), 0);
+      const totalGain = manualGain + salesProfit;
+
+      return { totalExpenditure, totalGain };
+    }
+
+    function renderFinancialGraphs() {
+      const { totalExpenditure, totalGain } = getFinancialTotals();
+      const maxVal = Math.max(totalExpenditure, totalGain, 100);
+
+      const expPct = totalExpenditure > 0 ? Math.max(12, Math.min(100, (totalExpenditure / maxVal) * 100)) : 4;
+      const gainPct = totalGain > 0 ? Math.max(12, Math.min(100, (totalGain / maxVal) * 100)) : 4;
+
+      document.getElementById('overview-exp-bar').style.height = expPct + '%';
+      document.getElementById('overview-gain-bar').style.height = gainPct + '%';
+      document.getElementById('overview-exp-total').textContent = '₹' + totalExpenditure.toFixed(2);
+      document.getElementById('overview-gain-total').textContent = '₹' + totalGain.toFixed(2);
+
+      const barsContainer = document.getElementById('overview-products-bars');
+      if (!state.sales || state.sales.length === 0) {
+        barsContainer.innerHTML = `<p class="text-[11px] text-[#8E8E8E] pb-4">No product sales recorded yet</p>`;
+      } else {
+        const recentSales = state.sales.slice(-5);
+        const maxSale = Math.max(...recentSales.map(s => Math.max(s.totalCost, Math.max(0, s.netProfit))), 50);
+        barsContainer.innerHTML = recentSales.map(s => {
+          const cPct = Math.max(12, (s.totalCost / maxSale) * 100);
+          const pPct = s.netProfit > 0 ? Math.max(12, (s.netProfit / maxSale) * 100) : 4;
+          return `
+            <div class="flex flex-col items-center h-full justify-end flex-1 min-w-0">
+              <div class="flex items-end gap-1 h-full w-full justify-center">
+                <div class="w-3 bg-[#E11D48] rounded-t" style="height:${cPct}%"></div>
+                <div class="w-3 bg-[#16A34A] rounded-t" style="height:${pPct}%"></div>
+              </div>
+              <span class="text-[9px] font-medium text-[#8E8E8E] truncate max-w-[48px] mt-1">${escapeHTML(s.productName)}</span>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function resetGraphsHub() {
+      document.getElementById('graphs-overview').classList.remove('hidden-view');
+      document.getElementById('graphs-sub-expenditure').classList.add('hidden-view');
+      document.getElementById('graphs-sub-gain').classList.add('hidden-view');
+      document.getElementById('graphs-sub-products-sold').classList.add('hidden-view');
+      renderFinancialGraphs();
+    }
+
+    function openGraphSubView(sub) {
+      document.getElementById('graphs-overview').classList.add('hidden-view');
+      document.getElementById('graphs-sub-expenditure').classList.toggle('hidden-view', sub !== 'expenditure');
+      document.getElementById('graphs-sub-gain').classList.toggle('hidden-view', sub !== 'gain');
+      document.getElementById('graphs-sub-products-sold').classList.toggle('hidden-view', sub !== 'products-sold');
+
+      const { totalExpenditure, totalGain } = getFinancialTotals();
+      const maxVal = Math.max(totalExpenditure, totalGain, 100);
+
+      if (sub === 'expenditure') {
+        document.getElementById('detail-exp-bar').style.height = (totalExpenditure > 0 ? Math.max(15, (totalExpenditure / maxVal) * 100) : 6) + '%';
+        document.getElementById('exp-old-val').value = totalExpenditure.toFixed(2);
+        document.getElementById('exp-new-val').value = '';
+        document.getElementById('exp-combined-preview').textContent = `Current Total: ₹${totalExpenditure.toFixed(2)}`;
+        renderExpenseHistory();
+      }
+      if (sub === 'gain') {
+        document.getElementById('detail-gain-bar').style.height = (totalGain > 0 ? Math.max(15, (totalGain / maxVal) * 100) : 6) + '%';
+        document.getElementById('gain-old-val').value = totalGain.toFixed(2);
+        document.getElementById('gain-new-val').value = '';
+        document.getElementById('gain-combined-preview').textContent = `Current Total: ₹${totalGain.toFixed(2)}`;
+      }
+      if (sub === 'products-sold') {
+        populateProductsSoldDropdown();
+        renderMonthlyBarsAndLedger();
+      }
+    }
+
+    function previewOldPlusNew(type) {
+      const oldV = parseFloat(document.getElementById(type + '-old-val').value) || 0;
+      const newV = parseFloat(document.getElementById(type + '-new-val').value) || 0;
+      document.getElementById(type + '-combined-preview').textContent = `Old + New = ₹${(oldV + newV).toFixed(2)}`;
+    }
+
+    async function updateManualExpenditure(e) {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('exp-new-val').value) || 0;
+      const note = document.getElementById('exp-note-input').value.trim();
+      if (amount <= 0) return;
+
+      if (!state.expenses) state.expenses = [];
+      state.expenses.push({
+        id: 'exp_' + Date.now(),
+        amount,
+        note,
+        by: state.members[state.currentUserId].shortName,
+        date: new Date().toLocaleDateString()
+      });
+
+      await saveState();
+      e.target.reset();
+      openGraphSubView('expenditure');
+      showToast('Expenditure updated.');
+    }
+
+    function renderExpenseHistory() {
+      const box = document.getElementById('expense-history-list');
+      if (!state.expenses || state.expenses.length === 0) {
+        box.innerHTML = '';
+        return;
+      }
+      box.innerHTML = state.expenses.slice().reverse().map(ex => `
+        <div class="ig-card p-3 flex items-center justify-between text-xs bg-white">
+          <div>
+            <p class="font-semibold text-[#262626]">${escapeHTML(ex.note)}</p>
+            <p class="text-[11px] text-[#8E8E8E]">By ${ex.by} • ${ex.date}</p>
+          </div>
+          <span class="font-semibold text-[#E11D48]">+₹${Number(ex.amount).toFixed(2)}</span>
+        </div>
+      `).join('');
+    }
+
+    async function updateManualGain(e) {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('gain-new-val').value) || 0;
+      const note = document.getElementById('gain-note-input').value.trim();
+      if (amount <= 0) return;
+
+      if (!state.manualGains) state.manualGains = [];
+      state.manualGains.push({
+        id: 'gain_' + Date.now(),
+        amount,
+        note,
+        by: state.members[state.currentUserId].shortName,
+        date: new Date().toLocaleDateString()
+      });
+
+      await saveState();
+      e.target.reset();
+      openGraphSubView('gain');
+      showToast('Gain updated.');
+    }
+
+    function populateProductsSoldDropdown() {
+      const select = document.getElementById('sale-product-select');
+      select.innerHTML = `<option value="">-- Choose Product from Catalog (${(state.products || []).length}) --</option>` +
+        (state.products || []).map(p => `<option value="${p.id}">${escapeHTML(p.name)} (Sell: ₹${p.sellingPrice})</option>`).join('');
+      recalculateSaleBreakdown();
+    }
+
+    function recalculateSaleBreakdown() {
+      const prodId = document.getElementById('sale-product-select').value;
+      const prod = (state.products || []).find(p => p.id === prodId);
+      const costsBox = document.getElementById('selected-product-costs-box');
+
+      if (!prod) {
+        costsBox.classList.add('hidden-view');
+        document.getElementById('calc-razorpay-fee').textContent = '₹0.00';
+        document.getElementById('calc-total-cost').textContent = '₹0.00';
+        document.getElementById('calc-net-profit').textContent = '₹0.00';
+        return null;
+      }
+
+      costsBox.classList.remove('hidden-view');
+      const selling = Number(prod.sellingPrice) || 0;
+      const making = Number(prod.makingPrice) || 0;
+      const box = Number(prod.boxPrice) || 0;
+      const sticker = Number(prod.stickerPrice) || 0;
+      const delivery = parseFloat(document.getElementById('sale-delivery-input').value) || 0;
+
+      const billCharge = 2;
+      const razorpayFee = selling * 0.02;
+      const totalCost = making + box + sticker + delivery + billCharge + razorpayFee;
+      const netProfit = selling - totalCost;
+
+      document.getElementById('calc-selling-price').textContent = '₹' + selling.toFixed(2);
+      document.getElementById('calc-making-cost').textContent = '₹' + making.toFixed(2);
+      document.getElementById('calc-box-cost').textContent = '₹' + box.toFixed(2);
+      document.getElementById('calc-sticker-cost').textContent = '₹' + sticker.toFixed(2);
+      document.getElementById('calc-razorpay-fee').textContent = '₹' + razorpayFee.toFixed(2);
+      document.getElementById('calc-total-cost').textContent = '₹' + totalCost.toFixed(2);
+
+      const profitEl = document.getElementById('calc-net-profit');
+      profitEl.textContent = '₹' + netProfit.toFixed(2);
+      profitEl.style.color = netProfit >= 0 ? '#16A34A' : '#E11D48';
+
+      return { prod, selling, making, box, sticker, delivery, billCharge, razorpayFee, totalCost, netProfit };
+    }
+
+    async function recordProductSale(e) {
+      e.preventDefault();
+      const breakdown = recalculateSaleBreakdown();
+      if (!breakdown) {
+        showToast('Select a product first (or add one in + tab).', true);
+        return;
+      }
+
+      const now = new Date();
+      const monthLabel = now.toLocaleString('en-US', { month: 'short' });
+
+      if (!state.sales) state.sales = [];
+      state.sales.push({
+        id: 'sale_' + Date.now(),
+        productId: breakdown.prod.id,
+        productName: breakdown.prod.name,
+        sellingPrice: breakdown.selling,
+        totalCost: breakdown.totalCost,
+        netProfit: breakdown.netProfit,
+        delivery: breakdown.delivery,
+        razorpayFee: breakdown.razorpayFee,
+        month: monthLabel,
+        date: now.toLocaleDateString(),
+        recordedBy: state.members[state.currentUserId].shortName
+      });
+
+      await saveState();
+      document.getElementById('sale-delivery-input').value = '0';
+      recalculateSaleBreakdown();
+      renderMonthlyBarsAndLedger();
+      showToast(`Sale recorded successfully!`);
+    }
+
+    async function deleteRecordedSale(saleId) {
+      state.sales = (state.sales || []).filter(s => s.id !== saleId);
+      await saveState();
+      renderMonthlyBarsAndLedger();
+      renderFinancialGraphs();
+      showToast('Sale entry deleted & graphs updated.');
+    }
+
+    function renderMonthlyBarsAndLedger() {
+      const barsEl = document.getElementById('monthly-sales-bars');
+      const labelsEl = document.getElementById('monthly-sales-labels');
+
+      if (!state.sales || state.sales.length === 0) {
+        barsEl.innerHTML = `<p class="text-[11px] text-[#8E8E8E] pb-4">Record a sale below to populate monthly bars</p>`;
+        labelsEl.innerHTML = `<span>Month 1</span><span>Month 2</span><span>Month 3</span>`;
+      } else {
+        const grouped = {};
+        state.sales.forEach(s => {
+          if (!grouped[s.month]) grouped[s.month] = { cost: 0, profit: 0 };
+          grouped[s.month].cost += s.totalCost;
+          grouped[s.month].profit += Math.max(0, s.netProfit);
+        });
+        const months = Object.keys(grouped).slice(-4);
+        const maxM = Math.max(...months.map(m => Math.max(grouped[m].cost, grouped[m].profit)), 100);
+
+        barsEl.innerHTML = months.map(m => {
+          const cH = Math.max(12, (grouped[m].cost / maxM) * 100);
+          const pH = Math.max(12, (grouped[m].profit / maxM) * 100);
+          return `
+            <div class="flex items-end gap-1.5 h-full">
+              <div class="w-4 bg-[#E11D48] rounded-t" style="height:${cH}%"></div>
+              <div class="w-4 bg-[#16A34A] rounded-t" style="height:${pH}%"></div>
+            </div>
+          `;
+        }).join('');
+        labelsEl.innerHTML = months.map(m => `<span>${m}</span>`).join('');
+      }
+
+      const ledger = document.getElementById('sales-ledger-list');
+      if (!state.sales || state.sales.length === 0) {
+        ledger.innerHTML = `<p class="text-xs text-[#8E8E8E] text-center py-3">No sales recorded yet.</p>`;
+        return;
+      }
+
+      ledger.innerHTML = state.sales.slice().reverse().map(s => `
+        <div class="ig-card p-3 flex items-center justify-between gap-2 text-xs bg-white">
+          <div class="min-w-0">
+            <p class="font-semibold text-[#262626] truncate">${escapeHTML(s.productName)} (Sold ₹${s.sellingPrice.toFixed(0)})</p>
+            <p class="text-[11px] text-[#8E8E8E] truncate">Outflow: ₹${s.totalCost.toFixed(2)} • By ${escapeHTML(s.recordedBy || 'Team')}</p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="font-bold ${s.netProfit >= 0 ? 'text-[#16A34A]' : 'text-[#E11D48]'}">
+              ${s.netProfit >= 0 ? '+' : ''}₹${s.netProfit.toFixed(2)}
+            </span>
+            <button type="button" onclick="deleteRecordedSale('${s.id}')" title="Delete sale entry" class="btn-press px-2 py-1 rounded-lg bg-[#FFF1F2] text-[#E11D48] text-[11px] font-bold hover:bg-[#FFE4E6]">
+              Delete
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>
